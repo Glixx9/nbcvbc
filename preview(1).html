@@ -1,0 +1,1560 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0e1110" />
+  <title>The Dungeon Below</title>
+  <style>
+:root{
+  --bg:#090b0a;--panel:#111512;--panel2:#151a16;--line:#2b332d;--text:#e7e2d5;--muted:#928f85;
+  --gold:#c4a56b;--rust:#9d5c43;--green:#8ca681;--danger:#b96955;--ink:#0b0e0c;
+  --shadow:0 18px 60px rgba(0,0,0,.42)
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -20%,#1a211c 0,#0b0e0c 38%,#070908 100%);color:var(--text);font-family:Georgia,'Times New Roman',serif}
+body{min-height:100vh}.hidden{display:none!important}button,input,select{font:inherit}
+button{cursor:pointer;color:var(--text);background:#171c18;border:1px solid #3a443c;padding:.72rem .95rem;letter-spacing:.08em;font-size:.76rem;text-transform:uppercase;transition:.16s ease}
+button:hover:not(:disabled){border-color:var(--gold);transform:translateY(-1px)}button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:linear-gradient(#7b6340,#5b482e);border-color:#ad8c57;color:#fff8e5;font-weight:700}
+button.secondary{background:#182019;border-color:#4d6252}.ghost{background:transparent}.small{padding:.45rem .65rem}.wide{width:100%;margin-top:.65rem}
+.topbar{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(8,11,9,.88);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:12px}.brand-mark,.sigil{color:var(--gold);font-size:1.8rem;text-shadow:0 0 18px rgba(196,165,107,.18)}h1{font-size:1.05rem;letter-spacing:.16em;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:.8rem;letter-spacing:.04em}.top-actions{display:flex;gap:8px}
+.layout{display:grid;grid-template-columns:260px minmax(480px,1fr) 330px;gap:14px;max-width:1600px;margin:0 auto;padding:14px}.sidebar{display:flex;flex-direction:column;gap:12px}.card,.game-screen{background:linear-gradient(180deg,rgba(21,26,22,.97),rgba(13,17,14,.97));border:1px solid var(--line);box-shadow:var(--shadow)}.card{padding:14px}.game-screen{min-height:calc(100vh - 128px);padding:24px 30px;position:relative;overflow:hidden}.game-screen:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 0,rgba(196,165,107,.025) 50%,transparent 100%)}
+.section-title{font-family:Arial,sans-serif;font-size:.67rem;font-weight:700;letter-spacing:.16em;color:#bbb5a6;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242c26;padding-bottom:8px;margin-bottom:10px}.section-title.spaced{margin-top:16px}.badge{font-size:.58rem;color:var(--gold);border:1px solid #4f4938;padding:3px 5px}.muted{color:var(--muted)}.mono{font-family:ui-monospace,Consolas,monospace;font-size:.74rem;max-width:130px;overflow:hidden;text-overflow:ellipsis}
+.meter-row,.equip-row,.form-line{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;margin:8px 0}.meter-row span,.equip-row span,.form-line span{color:var(--muted)}.meter{height:7px;background:#090b0a;border:1px solid #273029;overflow:hidden}.meter-fill{height:100%;width:100%;transition:width .25s}.health{background:linear-gradient(90deg,#6d3027,#b45a45)}.stamina{background:linear-gradient(90deg,#435d3d,#7da270)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#273029;border:1px solid #273029;margin-top:13px}.stat-grid div{background:#111512;padding:8px;display:flex;justify-content:space-between;font-size:.74rem}.stat-grid span{color:var(--muted)}.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.chip,.room-tags span{border:1px solid #3b443d;background:#111512;padding:4px 6px;font-family:Arial,sans-serif;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:#b8b3a7}.chip.danger{border-color:#704b42;color:#d08c79}
+.start-screen{min-height:70vh;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.start-screen .sigil{font-size:4rem;margin-bottom:8px}.start-screen h2{font-size:1.55rem;letter-spacing:.14em;margin:4px 0}.start-screen>p{color:var(--muted);max-width:560px}.start-box{width:min(430px,90%);border-top:1px solid #343c36;margin-top:24px;padding-top:18px;text-align:left}.start-box label{font-family:Arial,sans-serif;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#b7b2a6;display:block;margin:12px 0}.start-box input,.start-box select{width:100%;background:#0c100d;border:1px solid #3b443d;color:var(--text);padding:.75rem;margin-top:7px}.seed-row{display:flex;gap:6px}.seed-row input{flex:1}.seed-row button{margin-top:7px}
+.room-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:1px solid #2b332d;padding-bottom:16px}.kicker{font-family:Arial,sans-serif;color:var(--gold);font-size:.64rem;letter-spacing:.18em;font-weight:700}.room-heading h2{margin:4px 0 0;font-size:1.7rem;font-weight:normal}.room-tags{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.narrative{padding:20px 2px 8px;font-size:1.03rem;line-height:1.7;max-width:900px}.narrative p{margin:.2rem 0 1rem}.narrative .system{font-family:Arial,sans-serif;font-size:.73rem;color:#b6aa8e;letter-spacing:.04em;border-left:2px solid #66573d;padding-left:10px}.narrative .warning{color:#d19a80}.narrative .good{color:#a7c29e}.narrative em{color:#c9c1ae}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:16px}.choices button{text-align:left;min-height:48px;position:relative}.choices button strong{display:block;font-size:.76rem}.choices button small{display:block;color:#8d9189;letter-spacing:0;text-transform:none;font-size:.73rem;margin-top:3px}.choices button.danger{border-color:#684036}.choices button.special{border-color:#6c5d3c;background:#1b1913}
+.enemy-panel{border:1px solid #4b362f;background:linear-gradient(180deg,#1c1513,#121311);padding:12px 14px;margin:10px 0}.enemy-card{border-bottom:1px solid #352925;padding:8px 0}.enemy-card:last-child{border-bottom:0}.enemy-head{display:flex;justify-content:space-between;align-items:center}.enemy-name{font-weight:bold;letter-spacing:.04em}.enemy-hp{font-family:Arial,sans-serif;font-size:.68rem;color:#c7b7ac}.intent{margin-top:7px;color:#d0c2b1;font-style:italic;font-size:.9rem}.intent-label{font-family:Arial,sans-serif;font-style:normal;font-size:.58rem;letter-spacing:.12em;color:#9c7a6c;margin-right:7px}
+.tabbar{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.tab{padding:.7rem .3rem}.tab.active{border-color:var(--gold);color:#ead9b3}.tab-content{display:none;min-height:320px}.tab-content.active{display:block}.scroll-list{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto;padding-right:3px}.scroll-list.compact{max-height:250px}.journal-entry,.inventory-item,.evidence-entry,.discovery{padding:8px 9px;background:#0e120f;border:1px solid #262e28;font-size:.78rem;line-height:1.35}.journal-entry time,.inventory-item small,.evidence-entry small{display:block;color:var(--muted);font-family:Arial,sans-serif;font-size:.61rem;margin-bottom:3px}.inventory-item .item-head{display:flex;justify-content:space-between;gap:8px}.item-actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}.item-actions button{padding:.34rem .5rem;font-size:.57rem}.quick-mark{color:var(--gold);font-size:.65rem}.route{border:1px solid #2c352e;padding:10px;margin-bottom:8px;background:#0e120f}.route h4{margin:0 0 6px;font-size:.88rem;font-weight:normal;color:#d9ccb0}.route p{margin:4px 0;color:var(--muted);font-size:.73rem;line-height:1.4}.route .status{font-family:Arial,sans-serif;font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;color:var(--gold)}
+.footer{max-width:1600px;margin:0 auto;padding:0 18px 14px;display:flex;justify-content:space-between;color:#666c66;font-family:Arial,sans-serif;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:grid;place-items:center;padding:20px}.modal-card{width:min(620px,96vw);max-height:85vh;overflow:auto;background:#121713;border:1px solid #495249;box-shadow:0 30px 100px rgba(0,0,0,.7);padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #303930;margin-bottom:12px}.modal-head h3{font-weight:normal;letter-spacing:.08em}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.modal-card p{line-height:1.55;color:#d0cabd}.modal-card .death-title{color:#cf7c66}
+@media(max-width:1050px){.layout{grid-template-columns:220px 1fr}.right-panel{grid-column:1/-1;display:grid;grid-template-columns:160px 1fr}.tabbar{grid-template-columns:1fr;align-self:start}.tab-content{min-height:200px}.scroll-list{max-height:250px}}
+@media(max-width:760px){.topbar{height:auto;padding:12px}.brand p{display:none}.top-actions{gap:4px}.layout{display:block;padding:8px}.left-panel{display:grid;grid-template-columns:1fr 1fr}.run-card{grid-column:1/-1}.center-panel{margin:8px 0}.game-screen{min-height:auto;padding:18px 14px}.right-panel{display:block}.tabbar{grid-template-columns:repeat(3,1fr)}.choices{grid-template-columns:1fr}.room-heading{display:block}.room-tags{justify-content:flex-start;margin-top:10px}.footer{padding:5px 10px 14px}.left-panel .card{padding:10px}}
+@media(max-width:500px){.left-panel{display:block}.brand h1{font-size:.8rem}.brand-mark{display:none}.top-actions button{font-size:.58rem;padding:.5rem}.start-screen h2{font-size:1.2rem}.room-heading h2{font-size:1.35rem}}
+
+.tiny-equip{width:100%;padding:.35rem .5rem;font-size:.55rem;margin:2px 0 7px}
+
+</style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">⬡</div>
+        <div>
+          <h1>THE DUNGEON BELOW</h1>
+          <p id="subtitle">A forward-only survival RPG</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="saveBtn" class="ghost" title="Manual save">SAVE</button>
+        <button id="newBtn" class="ghost">NEW RUN</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar left-panel">
+        <section class="card status-card">
+          <div class="section-title"><span>STATUS</span><span id="difficultyBadge" class="badge">STANDARD</span></div>
+          <div class="meter-row"><span>Health</span><strong id="healthText">100 / 100</strong></div>
+          <div class="meter"><div id="healthBar" class="meter-fill health"></div></div>
+          <div class="meter-row"><span>Stamina</span><strong id="staminaText">100 / 100</strong></div>
+          <div class="meter"><div id="staminaBar" class="meter-fill stamina"></div></div>
+          <div class="stat-grid">
+            <div><span>Guard</span><strong id="guardStat">8</strong></div>
+            <div><span>Damage</span><strong id="damageStat">8</strong></div>
+            <div><span>Accuracy</span><strong id="accuracyStat">72</strong></div>
+            <div><span>Speed</span><strong id="speedStat">10</strong></div>
+            <div><span>Resolve</span><strong id="resolveStat">10</strong></div>
+            <div><span>Gold</span><strong id="goldStat">0</strong></div>
+          </div>
+          <div class="form-line"><span>Form</span><strong id="formState">Human</strong></div>
+          <div id="injuries" class="chips"></div>
+        </section>
+
+        <section class="card equipment-card">
+          <div class="section-title">EQUIPMENT</div>
+          <div class="equip-row"><span>Weapon</span><strong id="weaponName">None</strong></div>
+          <div class="condition" id="weaponCondition"></div>
+          <button id="weaponUnequip" class="ghost tiny-equip hidden">REMOVE WEAPON</button>
+          <div class="equip-row"><span>Armour</span><strong id="armourName">Prison Rags</strong></div>
+          <div class="condition" id="armourCondition"></div>
+          <button id="armourUnequip" class="ghost tiny-equip hidden">REMOVE ARMOUR</button>
+          <div class="equip-row"><span>Amulet</span><strong id="amuletName">None</strong></div>
+          <button id="amuletUnequip" class="ghost tiny-equip hidden">REMOVE AMULET</button>
+        </section>
+
+        <section class="card run-card">
+          <div class="section-title">RUN</div>
+          <div class="equip-row"><span>Region</span><strong id="regionName">The Cells</strong></div>
+          <div class="equip-row"><span>Rooms crossed</span><strong id="roomNumber">0</strong></div>
+          <div class="equip-row"><span>Seed</span><strong id="seedDisplay" class="mono">—</strong></div>
+          <div class="equip-row"><span>Backpack</span><strong id="slotsText">0 / 24</strong></div>
+        </section>
+      </aside>
+
+      <section class="center-panel">
+        <div id="gameScreen" class="game-screen">
+          <div id="startScreen" class="start-screen">
+            <div class="sigil">⬡</div>
+            <h2>YOU WAKE BENEATH THE RUINS.</h2>
+            <p>No curse. No hidden infection. No map of the way out.</p>
+            <div class="start-box">
+              <label>Difficulty
+                <select id="difficultySelect">
+                  <option value="story">Story</option>
+                  <option value="standard" selected>Standard</option>
+                  <option value="hard">Hard</option>
+                  <option value="ironman">Descent / Ironman</option>
+                </select>
+              </label>
+              <label>Run seed
+                <div class="seed-row"><input id="seedInput" maxlength="32" /><button id="randomSeedBtn" class="ghost small">RANDOM</button></div>
+              </label>
+              <button id="startBtn" class="primary wide">BEGIN DESCENT</button>
+              <button id="continueBtn" class="secondary wide hidden">CONTINUE SAVED RUN</button>
+            </div>
+          </div>
+
+          <div id="playScreen" class="hidden">
+            <div class="room-heading">
+              <div>
+                <div id="roomKicker" class="kicker">ROOM 1</div>
+                <h2 id="roomTitle">The Prison Cell</h2>
+              </div>
+              <div id="roomTags" class="room-tags"></div>
+            </div>
+
+            <div id="narrative" class="narrative" aria-live="polite"></div>
+            <div id="enemyPanel" class="enemy-panel hidden"></div>
+            <div id="choicePanel" class="choices"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar right-panel">
+        <div class="tabbar">
+          <button class="tab active" data-tab="journal">JOURNAL</button>
+          <button class="tab" data-tab="inventory">PACK</button>
+          <button class="tab" data-tab="routes">ESCAPE</button>
+        </div>
+
+        <section id="journalTab" class="card tab-content active">
+          <div class="section-title">RECENT OBSERVATIONS</div>
+          <div id="journalList" class="scroll-list"></div>
+          <div class="section-title spaced">TRANSFORMATION EVIDENCE</div>
+          <div id="evidenceList" class="scroll-list compact"></div>
+        </section>
+
+        <section id="inventoryTab" class="card tab-content">
+          <div class="section-title"><span>BACKPACK</span><span id="quickText" class="muted">Quick 0/4</span></div>
+          <div id="inventoryList" class="scroll-list"></div>
+          <div id="droppedWrap" class="hidden">
+            <div class="section-title spaced">DROPPED HERE</div>
+            <div id="droppedList"></div>
+          </div>
+        </section>
+
+        <section id="routesTab" class="card tab-content">
+          <div class="section-title">POSSIBLE ESCAPE ROUTES</div>
+          <div id="routeList" class="route-list"></div>
+          <div class="section-title spaced">DISCOVERIES</div>
+          <div id="discoveryList" class="scroll-list compact"></div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="footer"><span>Choices close doors behind you.</span><span id="autosaveText">Autosave: ready</span></footer>
+  </div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head"><h3 id="modalTitle">Notice</h3><button id="modalClose" class="ghost small">×</button></div>
+      <div id="modalBody"></div>
+      <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+
+  <script>
+
+"use strict";
+
+const SAVE_KEY = "the_dungeon_below_save_v1";
+const memoryStorage = {};
+function storageGet(k){ try { return window.localStorage.getItem(k); } catch(e) { return Object.prototype.hasOwnProperty.call(memoryStorage,k)?memoryStorage[k]:null; } }
+function storageSet(k,v){ try { window.localStorage.setItem(k,v); } catch(e) { memoryStorage[k]=String(v); } }
+function storageRemove(k){ try { window.localStorage.removeItem(k); } catch(e) { delete memoryStorage[k]; } }
+
+
+const DIFFICULTY = {
+  story:   { label: "STORY", enemyHp: 0.82, enemyDmg: 0.76, loot: 1.30, wear: 0.6 },
+  standard:{ label: "STANDARD", enemyHp: 1.00, enemyDmg: 1.00, loot: 1.00, wear: 1.0 },
+  hard:    { label: "HARD", enemyHp: 1.18, enemyDmg: 1.18, loot: 0.82, wear: 1.35 },
+  ironman: { label: "DESCENT", enemyHp: 1.28, enemyDmg: 1.26, loot: 0.72, wear: 1.55 }
+};
+
+const ENEMY_DB = {
+  rat: { name:"Giant Rat", hp:20, damage:6, guard:1, speed:13, kind:"beast" },
+  skeleton: { name:"Skeleton Guard", hp:34, damage:8, guard:4, speed:8, kind:"undead" },
+  wolf: { name:"Dungeon Wolf", hp:31, damage:9, guard:2, speed:15, kind:"beast" },
+  fungal: { name:"Fungal Host", hp:44, damage:7, guard:3, speed:5, kind:"fungal" },
+  construct: { name:"Warden Construct", hp:62, damage:11, guard:8, speed:7, kind:"construct" },
+  wardenKnight: { name:"Warden Knight", hp:105, damage:14, guard:11, speed:9, kind:"boss" },
+  thorn: { name:"Thorn Hexer", hp:58, damage:9, guard:3, speed:10, kind:"witch", archetype:"thorn" },
+  battle: { name:"Battle Witch", hp:64, damage:11, guard:5, speed:12, kind:"witch", archetype:"battle" },
+  alchemist: { name:"Alchemist Witch", hp:57, damage:8, guard:3, speed:11, kind:"witch", archetype:"alchemist" },
+  choir: { name:"Pale Choir Resonance Witch", hp:55, damage:8, guard:3, speed:10, kind:"witch", archetype:"choir" },
+  mirror: { name:"Mirror Witch", hp:52, damage:8, guard:2, speed:14, kind:"witch", archetype:"mirror" },
+  beastcaller: { name:"Beastcaller Witch", hp:66, damage:9, guard:4, speed:11, kind:"witch", archetype:"beastcaller" }
+};
+
+const ITEM_DB = {
+  bandage: {
+    name:"Simple Bandage", type:"consumable", size:1, stack:true, quick:true,
+    description:"Clean enough to bind a wound.",
+    use(s){ heal(18 + (s.skills.survival * 2)); addNarrative("You bind the worst of your wounds.", "good"); }
+  },
+  redmoss: {
+    name:"Redmoss Restorative", type:"consumable", size:1, stack:true, quick:true,
+    description:"A thick red-brown tonic with plant sediment.",
+    use(){ heal(32); addNarrative("Warmth spreads from your stomach. Your breathing steadies.", "good"); }
+  },
+  secondWind: {
+    name:"Second Wind Draught", type:"consumable", size:1, stack:true, quick:true,
+    description:"Cloudy blue liquid with a sharp mint smell.",
+    use(){ restoreStamina(55); addNarrative("Cold mint burns down your throat. Strength returns to your limbs.", "good"); }
+  },
+  neutraliser: {
+    name:"Alchemical Neutraliser", type:"consumable", size:1, stack:true, quick:true,
+    description:"A reagent intended for recent chemical or magical exposure.",
+    use(s){
+      if(s.tf.recentExposureRooms <= 2 && s.tf.recentExposure){
+        const pool = s.tf.recentExposure.species;
+        s.tf.exposurePools[pool] = Math.max(0, (s.tf.exposurePools[pool]||0)-3);
+        addEvidence("A neutralising reagent was used soon after a suspicious exposure.", "The immediate residue seems weaker. Any established condition would remain.");
+        addNarrative("The reagent stings, then leaves a clean metallic numbness across the affected skin.", "good");
+      } else {
+        addNarrative("The neutraliser reacts weakly. Whatever it was meant to catch is no longer fresh.", "system");
+      }
+    }
+  },
+  suppression: {
+    name:"Suppression Draught", type:"consumable", size:1, stack:true, quick:true,
+    description:"A bitter grey medicine used to slow active magical conditions.",
+    use(s){ s.tf.suppressionRooms = Math.max(s.tf.suppressionRooms, 5); addEvidence("A suppression draught was taken.", "Progression should be slowed for a while; existing changes remain."); addNarrative("A deep chill settles behind your ribs. The strange pressure in your body grows quieter.", "good"); }
+  },
+  reversal: {
+    name:"Weak Reversal Potion", type:"consumable", size:1, stack:false, quick:true,
+    description:"A specialist preparation intended to reverse a minor physical change.",
+    use(s){
+      if(s.tf.active && s.tf.stage > 0){
+        s.tf.stage = Math.max(0, s.tf.stage-1);
+        s.tf.progress = 0;
+        addEvidence("A weak reversal potion was used.", "One recent physical change appears to have receded. The source may still be active.");
+        addNarrative("Pain rolls through you in reverse, followed by a strange sense of things settling back into place.", "good");
+      } else {
+        addNarrative("The potion leaves you nauseous, but there is no obvious change to reverse.", "system");
+      }
+    }
+  },
+  repair: {
+    name:"Repair Kit", type:"tool", size:2, stack:false, quick:false,
+    description:"Oil, wire, rivets, and two small Warden clamps.",
+    use(s){
+      const targets = [s.player.weapon, s.player.armour].filter(Boolean);
+      if(!targets.length){ addNarrative("There is nothing equipped that needs repair.", "system"); return false; }
+      targets.forEach(x => x.condition = Math.min(100, (x.condition??100)+35));
+      addNarrative("You tighten, patch, and straighten your equipment.", "good");
+      return true;
+    }
+  },
+  listeningTube: {
+    name:"Listening Tube", type:"tool", size:1, stack:false, quick:false,
+    description:"A simple brass tube useful for listening through doors."
+  },
+  climbingKit: {
+    name:"Climbing Kit", type:"tool", size:3, stack:false, quick:false,
+    description:"Rope, pitons, and a compact iron ascender."
+  },
+  controlSeal: {
+    name:"Warden Control Seal", type:"quest", size:0, stack:false, quick:false,
+    description:"A heavy seal cut with the tower mark. It reacts faintly to old mechanisms."
+  },
+  floodKey: {
+    name:"Floodgate Keywheel", type:"quest", size:0, stack:false, quick:false,
+    description:"A removable brass keywheel for old water-control machinery."
+  },
+  calibrationLens: {
+    name:"Glass Calibration Lens", type:"quest", size:0, stack:false, quick:false,
+    description:"A translucent lens etched with transport coordinates."
+  },
+  sword: {
+    name:"Rusted Short Sword", type:"weapon", size:2, stack:false, quick:false, damage:6, accuracy:0,
+    description:"Old, pitted, but balanced well enough to fight with."
+  },
+  guardBlade: {
+    name:"Warden Falchion", type:"weapon", size:3, stack:false, quick:false, damage:11, accuracy:-2,
+    description:"A broad old blade from the prison guard armoury."
+  },
+  padded: {
+    name:"Padded Guard Coat", type:"armour", size:3, stack:false, quick:false, guard:5,
+    description:"Faded quilted armour, repaired many times."
+  },
+  wardenArmour: {
+    name:"Warden Lamellar", type:"armour", size:4, stack:false, quick:false, guard:10,
+    description:"Overlapping plates made for the dungeon's ancient security forces."
+  },
+  wardenToken: {
+    name:"Warden's Token", type:"amulet", size:1, stack:false, quick:false, guardPct:0.10, examineBonus:1,
+    description:"A heavy iron disc stamped with a nearly worn-away tower symbol.", hiddenTf:null
+  },
+  quietBell: {
+    name:"Quiet Bell", type:"amulet", size:1, stack:false, quick:false, resolvePct:0.15,
+    description:"A tiny black bell that makes no sound when shaken.", hiddenTf:null
+  },
+  huntersTooth: {
+    name:"Hunter's Tooth", type:"amulet", size:1, stack:false, quick:false, damagePct:0.25, crit:0.10,
+    description:"A dark tooth drilled through with silver wire.", hiddenTf:{species:"wolf", mode:"wear", progressive:false, maxStage:3}
+  },
+  nightglass: {
+    name:"Nightglass Charm", type:"amulet", size:1, stack:false, quick:false, dodgePct:0.15,
+    description:"A black glass charm that seems clearer in darkness.", hiddenTf:{species:"cat", mode:"wear", progressive:true, maxStage:12}
+  },
+  amberFlask: {
+    name:"Cloudy Amber Flask", type:"mysteryPotion", size:1, stack:false, quick:true,
+    description:"Warm amber liquid with fine pale sediment."
+  },
+  silverAmpoule: {
+    name:"Unlabelled Silver Ampoule", type:"mysteryPotion", size:1, stack:false, quick:true,
+    description:"A sealed silvered ampoule. The liquid inside barely moves."
+  }
+};
+
+const DOOR_CLUES = [
+  "Cold air moves beneath the door.",
+  "Deep scratches score the lower stones.",
+  "A faint herbal smell lingers around the frame.",
+  "Water ticks somewhere beyond it.",
+  "A weak amber light pulses under the threshold.",
+  "The hinges are unusually clean.",
+  "You hear a distant chain drag once, then stop.",
+  "The stone around the latch is warm.",
+  "Fine pale dust has gathered in front of it.",
+  "A draft carries the smell of old paper and mildew.",
+  "Something small moved on the other side.",
+  "A faded Warden symbol is cut above the frame."
+];
+
+const ROOM_DESCRIPTIONS = {
+  quiet: [
+    "A narrow chamber lies empty except for collapsed shelving and old dust. The silence feels useful rather than safe.",
+    "The corridor opens into a bare junction where soot-black lamps have long since died. Nothing moves.",
+    "A disused guard recess offers a few moments without immediate danger."
+  ],
+  treasure: [
+    "A storage room has been broken open from the inside. Crates lie split across the floor.",
+    "An abandoned equipment alcove sits behind a half-fallen iron screen.",
+    "A stone workbench is littered with the remains of someone else's hurried search."
+  ],
+  hazard: [
+    "The floor ahead has settled unevenly. Several slabs look newer than the rest.",
+    "A pipe in the wall coughs hot vapour across the only clear path.",
+    "Black water covers the floor ankle-deep, hiding gaps between the stones."
+  ],
+  combat: [
+    "The chamber is not empty. Movement stops the instant you cross the threshold.",
+    "Something has made a den among broken benches and rusted restraints.",
+    "A shape turns toward you from the far side of the room."
+  ],
+  lore: [
+    "Rows of scratched notes cover one wall, written by different hands over many years.",
+    "A damaged Warden plaque hangs crooked above a bank of dead mechanisms.",
+    "Old documents have fused together with damp, but several lines remain legible."
+  ],
+  rest: [
+    "A heavy inner bolt still works. For once, the room can be secured from this side.",
+    "A small maintenance shelter has one intact door, dry bedding, and no second entrance.",
+    "Someone once marked this room with a lantern symbol. The air is still and clean."
+  ],
+  merchant: [
+    "Lamplight spills across a chalk line on the floor. A woman in a stained travelling coat looks up from a portable alchemy case."
+  ]
+};
+
+let state = null;
+let ui = {};
+let lastModalCallback = null;
+
+document.addEventListener("DOMContentLoaded", init);
+
+function init(){
+  ui = {
+    startScreen: q("#startScreen"), playScreen:q("#playScreen"), startBtn:q("#startBtn"), continueBtn:q("#continueBtn"),
+    difficultySelect:q("#difficultySelect"), seedInput:q("#seedInput"), randomSeedBtn:q("#randomSeedBtn"),
+    narrative:q("#narrative"), choicePanel:q("#choicePanel"), enemyPanel:q("#enemyPanel"),
+    roomTitle:q("#roomTitle"), roomKicker:q("#roomKicker"), roomTags:q("#roomTags"),
+    healthText:q("#healthText"), healthBar:q("#healthBar"), staminaText:q("#staminaText"), staminaBar:q("#staminaBar"),
+    guardStat:q("#guardStat"), damageStat:q("#damageStat"), accuracyStat:q("#accuracyStat"), speedStat:q("#speedStat"), resolveStat:q("#resolveStat"), goldStat:q("#goldStat"),
+    formState:q("#formState"), injuries:q("#injuries"), weaponName:q("#weaponName"), weaponCondition:q("#weaponCondition"), armourName:q("#armourName"), armourCondition:q("#armourCondition"), amuletName:q("#amuletName"), weaponUnequip:q("#weaponUnequip"), armourUnequip:q("#armourUnequip"), amuletUnequip:q("#amuletUnequip"),
+    regionName:q("#regionName"), roomNumber:q("#roomNumber"), seedDisplay:q("#seedDisplay"), slotsText:q("#slotsText"), difficultyBadge:q("#difficultyBadge"),
+    journalList:q("#journalList"), evidenceList:q("#evidenceList"), inventoryList:q("#inventoryList"), quickText:q("#quickText"), droppedWrap:q("#droppedWrap"), droppedList:q("#droppedList"),
+    routeList:q("#routeList"), discoveryList:q("#discoveryList"), autosaveText:q("#autosaveText"),
+    saveBtn:q("#saveBtn"), newBtn:q("#newBtn"),
+    modal:q("#modal"), modalTitle:q("#modalTitle"), modalBody:q("#modalBody"), modalActions:q("#modalActions"), modalClose:q("#modalClose")
+  };
+  ui.seedInput.value = randomSeed();
+  ui.startBtn.addEventListener("click", () => startNewRun(ui.difficultySelect.value, ui.seedInput.value.trim() || randomSeed()));
+  ui.randomSeedBtn.addEventListener("click", () => ui.seedInput.value = randomSeed());
+  ui.continueBtn.addEventListener("click", loadRun);
+  ui.saveBtn.addEventListener("click", manualSave);
+  ui.newBtn.addEventListener("click", confirmNewRun);
+  ui.modalClose.addEventListener("click", closeModal);
+  ui.weaponUnequip.addEventListener("click",()=>unequip("weapon"));
+  ui.armourUnequip.addEventListener("click",()=>unequip("armour"));
+  ui.amuletUnequip.addEventListener("click",()=>unequip("amulet"));
+  document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", ()=>switchTab(btn.dataset.tab)));
+  const has = !!storageGet(SAVE_KEY);
+  ui.continueBtn.classList.toggle("hidden", !has);
+}
+
+function q(sel){ return document.querySelector(sel); }
+function randomSeed(){ return Math.random().toString(36).slice(2,10).toUpperCase(); }
+function uid(prefix="i"){ return prefix+"_"+Math.random().toString(36).slice(2,9); }
+
+function newState(difficulty, seed){
+  return {
+    version:1, difficulty, seed, rngCounter:0, roomNo:1, region:"The Cells", currentRoom:null, roomHistory:[],
+    pressureHistory:[], recentRoomKinds:[], currentNarrative:[], inCombat:false, combat:null, ended:false,
+    player:{
+      hp:100,maxHp:100,stamina:100,maxStamina:100,baseGuard:8,baseDamage:7,baseAccuracy:75,baseSpeed:10,baseResolve:10,
+      gold:0, inventory:[], quick:[], capacity:24, quickCapacity:4, weapon:null, armour:null, amulet:null,
+      injuries:[], temp:{}, defended:false, evading:false
+    },
+    skills:{combat:0,survival:0,occult:0},
+    tf:{
+      active:false,species:null,stage:0,progress:0,maxStage:12,source:null,latency:0,suppressionRooms:0,
+      exposurePools:{wolf:0,cat:0,raptor:0,reptile:0,fox:0}, recentExposure:null,recentExposureRooms:99,
+      lastStageRoom:-1, wear:{}, knownSpecies:false
+    },
+    journal:[],
+    evidence:[],
+    discoveries:[],
+    flags:{},
+    routes:{
+      chain:{name:"The Chain Lift",known:false,evidence:0,parts:0,status:"Rumour"},
+      pilgrim:{name:"The Pilgrim Shaft",known:false,evidence:0,parts:0,status:"Unknown"},
+      flood:{name:"The Floodgate",known:false,evidence:0,parts:0,status:"Unknown"},
+      glass:{name:"The Glass Gate",known:false,evidence:0,parts:0,status:"Unknown"}
+    },
+    stats:{combatsWon:0,roomsCleared:0,majorDiscoveries:0,choices:[]},
+    settings:{runLength:28}
+  };
+}
+
+function startNewRun(difficulty, seed){
+  state = newState(difficulty, seed);
+  giveItem("bandage",1,false);
+  const starterBandage=state.player.inventory.find(i=>i.key==="bandage"); if(starterBandage) state.player.quick.push(starterBandage.uid);
+  ui.startScreen.classList.add("hidden");
+  ui.playScreen.classList.remove("hidden");
+  enterScriptedCell();
+}
+
+function confirmNewRun(){
+  if(!state && !storageGet(SAVE_KEY)){ location.reload(); return; }
+  openModal("Start a new run?", "<p>This will replace the current autosave.</p>", [
+    {label:"CANCEL", action:closeModal},
+    {label:"NEW RUN", cls:"primary", action:()=>{ closeModal(); storageRemove(SAVE_KEY); state=null; ui.playScreen.classList.add("hidden"); ui.startScreen.classList.remove("hidden"); ui.continueBtn.classList.add("hidden"); ui.seedInput.value=randomSeed(); renderAll(); }}
+  ]);
+}
+
+function saveRun(){
+  if(!state || state.ended) return;
+  storageSet(SAVE_KEY, JSON.stringify(state));
+  if(ui.autosaveText) ui.autosaveText.textContent = "Autosave: room "+state.roomNo;
+  ui.continueBtn?.classList.remove("hidden");
+}
+function manualSave(){
+  if(!state){ return; }
+  if(state.difficulty==="ironman" && state.inCombat){ toast("Ironman does not allow manual saving during combat."); return; }
+  saveRun(); toast("Run saved.");
+}
+function loadRun(){
+  try{
+    const raw=storageGet(SAVE_KEY); if(!raw) return;
+    state=JSON.parse(raw);
+    ui.startScreen.classList.add("hidden"); ui.playScreen.classList.remove("hidden");
+    renderAll();
+    if(state.inCombat) renderCombatChoices();
+    else renderRoomChoices();
+  }catch(e){ openModal("Save could not be loaded","<p>The saved run appears to be invalid.</p>",[{label:"CLOSE",action:closeModal}]); }
+}
+
+function roll(){
+  const str = state.seed+":"+state.rngCounter++;
+  let h=2166136261>>>0;
+  for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); }
+  h += h<<13; h ^= h>>>7; h += h<<3; h ^= h>>>17; h += h<<5;
+  return (h>>>0)/4294967296;
+}
+function chance(p){ return roll()<p; }
+function pick(arr){ return arr[Math.floor(roll()*arr.length)]; }
+function int(min,max){ return Math.floor(roll()*(max-min+1))+min; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+
+function enterScriptedCell(){
+  state.roomNo=1; state.region="The Cells";
+  state.currentRoom={
+    id:"room1", title:"The Prison Cell", kind:"scripted", safe:false, resolved:false, searched:false, dropped:[],
+    tags:["Prison","Locked"], actionsDone:{}, description:"You wake on a cold stone floor beneath a dead wall lamp. A locked iron door faces a cracked water basin, straw bedding, scratched tally marks, a loose stone, and a small barred drain."
+  };
+  state.currentNarrative=[
+    "Your last clear memory is mundane: travelling, a sudden attack, then darkness.",
+    "You check yourself. You are hurt only in the ordinary way — bruised, thirsty, and very much human.",
+    "The first question is simple: <em>who brought you here, why are you alive, and how do you get out?</em>"
+  ];
+  addJournal("Woke in a locked stone cell with no clear memory of how long I have been underground.");
+  renderAll(); renderRoomChoices(); saveRun();
+}
+
+function renderRoomChoices(){
+  if(!state || state.ended) return;
+  clearChoices();
+  const r=state.currentRoom;
+  if(state.inCombat){ renderCombatChoices(); return; }
+  if(r.id==="room1"){ renderCellChoices(); return; }
+  if(r.id==="room2" && !r.resolved){ startCombat([createEnemy("skeleton")], {canFlee:false, onWin:finishRoom2Combat}); return; }
+  if(r.special==="merchant"){ renderMerchantRoomChoices(); return; }
+  if(r.special==="finale" && r.resolved){ renderFinaleChoices(); return; }
+  if(r.kind==="hazard" && !r.resolved){ renderHazardChoices(); return; }
+  if(r.kind==="treasure" && !r.searched){ addChoice("SEARCH THE ROOM","Look for usable supplies.",()=>searchTreasureRoom()); }
+  if(r.kind==="lore" && !r.resolved){ addChoice("STUDY THE CLUES","Spend time reading what remains.",()=>resolveLoreRoom()); }
+  if(r.kind==="rest"){
+    addChoice("REST","Recover Health and Stamina. Time will pass.",()=>restInRoom(), "special");
+  }
+  if(r.kind==="quiet" && !r.resolved){
+    addChoice("SEARCH CAREFULLY","A quiet room may still contain something useful.",()=>searchQuietRoom());
+    addChoice("MOVE ON","Keep your resources and your time.",()=>{r.resolved=true; renderRoomChoices();});
+  }
+  if(r.kind==="combat" && !r.resolved){
+    startCombat(r.enemies.map(createEnemy), {canFlee:r.canFlee!==false, onWin:()=>finishGenericCombat(r)});
+    return;
+  }
+  if(r.kind==="story" && !r.resolved){ resolveStoryRoom(r); return; }
+
+  if(r.resolved || r.searched || ["rest","quiet","treasure","lore"].includes(r.kind)){
+    const exits = r.exits?.length ? r.exits : generateExits();
+    r.exits = exits;
+    exits.forEach((ex,i)=> addChoice(`TAKE ${["LEFT","CENTRE","RIGHT"][i]||("EXIT "+(i+1))}`, ex.clue, ()=>commitExit(ex), "door"));
+  }
+  if(!ui.choicePanel.children.length) addChoice("CONTINUE","Move deeper into the dungeon.",()=>commitExit({clue:"The only passage continues downward."}));
+}
+
+function renderCellChoices(){
+  const a=state.currentRoom.actionsDone;
+  if(!a.door) addChoice("EXAMINE THE DOOR","Study the lock, hinges, and frame.",()=>cellAction("door"));
+  if(!a.bedding) addChoice("SEARCH THE BEDDING","Check the straw and torn cloth.",()=>cellAction("bedding"));
+  if(!a.scratches) addChoice("INSPECT THE SCRATCHES","Read the marks cut into the wall.",()=>cellAction("scratches"));
+  if(!a.body) addChoice("CHECK YOUR BODY","Look for injuries or anything unusual.",()=>cellAction("body"));
+  if(!a.stone) addChoice("SEARCH THE LOOSE STONE","Work it free from the wall.",()=>cellAction("stone"));
+  if(!a.water) addChoice("DRINK FROM THE BASIN","The water looks stale but clear.",()=>cellAction("water"));
+  if(!a.listen) addChoice("WAIT AND LISTEN","Be still and learn what the cell can tell you.",()=>cellAction("listen"));
+  if((a.door && a.stone) || state.flags.cellTimingKnown){
+    addChoice("WORK THE LOCK","Use what you have learned to force the old mechanism.",escapeCell,"special");
+  } else if(Object.keys(a).length>=5){
+    addChoice("FORCE A DISTURBANCE","Make enough noise to provoke whatever controls the door.",escapeCell,"danger");
+  }
+}
+
+function cellAction(key){
+  const r=state.currentRoom; r.actionsDone[key]=true;
+  const lines={
+    door:"The lock is old but not simple. A narrow gap beside the tongue might accept a thin strip of metal. The door frame also bears a tiny Warden mark.",
+    bedding:"Under the straw you find a folded strip of cloth and a previous prisoner's note: <em>When the corridor bell clicks twice, the lock hesitates.</em>",
+    scratches:"Most marks are tallies. One repeated symbol resembles a tower inside a broken circle. Someone scratched: <em>doors choose for you if you wait too long.</em>",
+    body:"No bite marks. No strange rash. No hidden brand. You are bruised, but completely human.",
+    stone:"Behind the loose stone is a bent strip of metal, flattened at one end.",
+    water:"The water tastes of iron and stone. Nothing else happens.",
+    listen:"Far away, a chain moves. Then — faintly — two clicks travel through the wall before the lock gives a tiny answering twitch."
+  };
+  addNarrative(lines[key]);
+  if(key==="bedding"){ giveItem("bandage",1); state.flags.cellTimingKnown=true; addJournal("A prisoner's note says the cell lock hesitates after two corridor clicks."); }
+  if(key==="stone"){ state.flags.bentMetal=true; addJournal("Found a bent metal strip behind a loose stone."); }
+  if(key==="listen"){ state.flags.cellTimingKnown=true; addJournal("Heard two distant clicks immediately before the cell lock moved."); }
+  renderAll(); clearChoices(); renderCellChoices(); saveRun();
+}
+
+function escapeCell(){
+  addNarrative("You wait for the second distant click, drive the bent metal into the narrow gap, and lean hard. The tongue slips. The iron door opens a handspan.", "good");
+  state.flags.escapedCell=true;
+  state.stats.choices.push("Escaped the prison cell through observation and timing.");
+  setTimeout(()=>enterRoom2(),150);
+}
+
+function enterRoom2(){
+  state.roomNo=2; state.region="The Intake Hall";
+  state.currentRoom={
+    id:"room2",title:"Intake Hall",kind:"combat",safe:false,resolved:false,searched:false,dropped:[],tags:["Prison","Warden"],
+    description:"The cell opens into an old prisoner-processing chamber. Empty restraints hang from the walls. A broken desk has spilled an inventory ledger across the floor. Three sealed exits wait beyond it."
+  };
+  state.currentNarrative=[
+    "A rusted short sword lies beside a fallen rack. A padded guard coat hangs from one surviving peg.",
+    "As you take them, bone scrapes against stone. A Skeleton Guard pulls itself upright between you and the exits."
+  ];
+  const sword=makeItem("sword"); sword.condition=78; state.player.weapon=sword;
+  const coat=makeItem("padded"); coat.condition=82; state.player.armour=coat;
+  addJournal("Reached an intake hall. The old Warden security system still controls multiple doors.");
+  tickRoomSystems(); renderAll(); saveRun();
+  startCombat([createEnemy("skeleton")], {canFlee:false,onWin:finishRoom2Combat});
+}
+
+function finishRoom2Combat(){
+  const r=state.currentRoom; r.resolved=true;
+  state.skills.combat = Math.max(state.skills.combat,1);
+  state.currentNarrative.push("The skeleton collapses. A mechanism groans overhead and all three sealed exits unlock at once.");
+  r.exits=[
+    {clue:"Cold moving air slips beneath the left-hand door.", branch:"cold"},
+    {clue:"Old blood and deep scrape marks stain the centre threshold.", branch:"scratched"},
+    {clue:"The right-hand frame smells faintly of herbs.", branch:"herbal"}
+  ];
+  addJournal("The Intake Hall taught the rule: choosing one exit means losing the others.");
+  renderAll();
+  clearChoices();
+  ["LEFT","CENTRE","RIGHT"].forEach((label,i)=>addChoice(label,r.exits[i].clue,()=>enterRoom3(r.exits[i].branch),"door"));
+  saveRun();
+}
+
+function enterRoom3(branch){
+  loseDroppedItems();
+  state.roomNo=3;
+  const data = {
+    cold:{title:"Maintenance Chamber",kind:"treasure",region:"Maintenance Galleries",tags:["Maintenance","Low Threat"],desc:"Cold air leaks through a cracked ventilation trunk. Tool lockers line one wall; most have already been forced."},
+    scratched:{title:"Abandoned Guard Room",kind:"combat",region:"Old Prison",tags:["Guard Post","Combat"],desc:"Weapon racks have been torn down. Fresh claw marks run through dried blood beside an overturned table.", enemies:["wolf"]},
+    herbal:{title:"Abandoned Apothecary",kind:"treasure",region:"Alchemical Laboratories",tags:["Alchemy","Unknown Items"],desc:"Broken cabinets smell of herbs, vinegar, and old magic. Two intact objects remain where someone left them in a hurry."}
+  }[branch];
+  state.region=data.region;
+  state.flags.firstBranch=branch;
+  state.currentRoom={id:"room3_"+branch,title:data.title,kind:data.kind,safe:false,resolved:false,searched:false,dropped:[],tags:data.tags,description:data.desc,enemies:data.enemies||null,branch};
+  state.currentNarrative=[data.desc];
+  if(branch==="cold"){
+    giveItem("repair",1,false); giveItem("listeningTube",1,false);
+    state.currentRoom.searched=true; state.currentRoom.resolved=true;
+    state.currentNarrative.push("You recover a compact repair kit and a brass listening tube. Nothing here carries any obvious magical risk.");
+  } else if(branch==="herbal"){
+    const p=makeItem("amberFlask"); p.knowledge="unknown"; p.trueVariant = chance(.45)?"safe_heal":(chance(.5)?"wolf_cumulative":"cat_speed");
+    const a=makeItem(chance(.5)?"huntersTooth":"wardenToken"); a.knowledge="unknown";
+    addItemInstance(p,false); addItemInstance(a,false);
+    state.currentRoom.searched=true; state.currentRoom.resolved=true;
+    state.currentNarrative.push("You take a cloudy amber flask and an amulet. Their appearance tells you almost nothing reliable about what they do.");
+    addJournal("Found unknown magical items in an abandoned apothecary. Their risks are not yet identified.");
+  }
+  tickRoomSystems(); renderAll(); saveRun();
+  if(branch==="scratched") startCombat([createEnemy("wolf")],{canFlee:false,onWin:()=>finishGenericCombat(state.currentRoom)});
+  else renderRoomChoices();
+}
+
+function enterNextProcedural(){
+  state.roomNo++;
+  const room = generateRoom(state.roomNo);
+  state.region=room.region;
+  state.currentRoom=room;
+  state.currentNarrative=[room.description];
+  state.stats.roomsCleared++;
+  tickRoomSystems();
+  state.roomHistory.push({no:state.roomNo,title:room.title,kind:room.kind,region:room.region});
+  state.recentRoomKinds.push(room.kind); if(state.recentRoomKinds.length>7) state.recentRoomKinds.shift();
+  renderAll(); saveRun(); renderRoomChoices();
+}
+
+function generateRoom(n){
+  const scripted = scriptedRoom(n);
+  if(scripted) return scripted;
+
+  const region = regionForRoom(n);
+  const recent=state.recentRoomKinds.slice(-4);
+  let pool=["combat","combat","combat","hazard","lore","treasure","quiet","rest","merchant"];
+  if(recent.filter(x=>x==="combat").length>=3) pool=pool.filter(x=>x!=="combat");
+  if(recent.filter(x=>x==="quiet").length>=2) pool=pool.filter(x=>x!=="quiet");
+  if(recent.includes("merchant")) pool=pool.filter(x=>x!=="merchant");
+  const pressure = state.pressureHistory.slice(-5).reduce((a,b)=>a+b,0);
+  const highPressureAllowed = pressure < 6;
+  let kind=pick(pool);
+  if(kind==="merchant" && n<8) kind="quiet";
+
+  const room={
+    id:"proc_"+n+"_"+state.rngCounter, title:titleFor(kind,region), kind, region, safe:kind==="rest",
+    resolved:false,searched:false,dropped:[],tags:[region.split(" ")[0],kind],description:pick(ROOM_DESCRIPTIONS[kind]||ROOM_DESCRIPTIONS.quiet)
+  };
+  if(kind==="combat"){
+    const enemyKey=chooseEnemy(region, highPressureAllowed);
+    room.enemies=[enemyKey];
+    if(["beastcaller","alchemist","choir"].includes(enemyKey)) pushPressure(enemyKey==="beastcaller"?3:2); else pushPressure(0);
+  } else pushPressure(kind==="treasure" && chance(.2)?1:0);
+  if(kind==="merchant") room.special="merchant";
+  return room;
+}
+
+function scriptedRoom(n){
+  const map={
+    6:()=>storyRoom("The Rope Store","Old Prison","Recent Rope",[
+      "A coil of modern surface-made rope lies among ancient prison supplies. It is too new to have been here long.",
+      "Someone is still bringing material — and perhaps prisoners — into the dungeon."
+    ],"rope"),
+    9:()=>merchantRoom("Lantern Workroom","Old Prison"),
+    12:()=>storyRoom("Lift Control Gallery","Maintenance Galleries","Chain Machinery",[
+      "A vertical shaft vanishes upward beyond sight. Huge chains disappear into darkness.",
+      "A damaged diagram calls it the <em>Chain Lift</em>. One control seal socket is empty."
+    ],"chain"),
+    14:()=>storyRoom("Pilgrim Records","Maintenance Galleries","Temple Record",[
+      "A half-burned temple record describes a narrow upward route called the <em>Pilgrim Shaft</em>.",
+      "The notes warn of collapsed climbs, but mention old maintenance anchors."
+    ],"pilgrim"),
+    16:()=>bossRoom("Warden Checkpoint","Warden Galleries","Warden Construct",["construct"]),
+    18:()=>storyRoom("Water Control Archive","Flooded Archives","Floodgate Record",[
+      "Corroded plans show a one-way water tunnel running beyond the lower wall.",
+      "The notation beside it reads: <em>FLOODGATE — EXTERNAL DISCHARGE.</em>"
+    ],"flood"),
+    20:()=>merchantRoom("Mirella's Temporary Laboratory","Alchemical Laboratories"),
+    22:()=>storyRoom("Transport Observatory","Warden Depths","Glass Gate",[
+      "A ring of black glass stands broken but not dead. Light crawls through its etched channels.",
+      "A maintenance slate calls the device the <em>Glass Gate</em> and warns that incorrect calibration can lead deeper instead of upward."
+    ],"glass"),
+    24:()=>bossRoom("Choir Crossing","Warden Depths","Pale Choir Ambush",["choir"]),
+    26:()=>bossRoom("The Beast Pens","Warden Depths","Beastcaller",["beastcaller"]),
+    28:()=>finalRoom()
+  };
+  return map[n]?.() || null;
+}
+
+function storyRoom(title,region,tag,lines,storyKey){
+  return {id:"story_"+state.roomNo,title,kind:"story",region,safe:false,resolved:false,searched:true,dropped:[],tags:["Story",tag],description:lines.join(" "),storyLines:lines,storyKey};
+}
+function merchantRoom(title,region){
+  return {id:"merchant_"+state.roomNo,title,kind:"merchant",special:"merchant",region,safe:true,resolved:true,searched:true,dropped:[],tags:["Lantern Coven","Safe-ish"],description:ROOM_DESCRIPTIONS.merchant[0]};
+}
+function bossRoom(title,region,tag,enemies){
+  return {id:"boss_"+state.roomNo,title,kind:"combat",region,safe:false,resolved:false,searched:false,dropped:[],tags:["Major Threat",tag],description:"The chamber seals as you enter. The Warden Mechanism has decided this encounter will be resolved here.",enemies,canFlee:false,boss:true};
+}
+function finalRoom(){
+  return {id:"finale",title:"The Warden Core",kind:"combat",special:"finale",region:"Warden Core",safe:false,resolved:false,searched:false,dropped:[],tags:["Boss","Warden Mechanism"],description:"A cathedral-sized mechanism beats behind stone ribs. An armoured Warden Knight steps away from the central control dais and lowers its weapon.",enemies:["wardenKnight"],canFlee:false,boss:true};
+}
+
+function regionForRoom(n){
+  if(n<=7) return "Old Prison";
+  if(n<=14) return "Maintenance Galleries";
+  if(n<=20) return "Alchemical Laboratories";
+  if(n<=23) return "Flooded Archives";
+  return "Warden Depths";
+}
+function titleFor(kind,region){
+  const names={
+    "Old Prison":{combat:"Broken Cellblock",hazard:"Collapsed Passage",lore:"Records Niche",treasure:"Confiscation Store",quiet:"Silent Cellblock",rest:"Guard Shelter",merchant:"Lantern Camp"},
+    "Maintenance Galleries":{combat:"Service Junction",hazard:"Steam Gallery",lore:"Mechanism Annex",treasure:"Tool Vault",quiet:"Dead Conduit",rest:"Maintenance Shelter",merchant:"Waystation"},
+    "Alchemical Laboratories":{combat:"Reaction Hall",hazard:"Spill Chamber",lore:"Formula Archive",treasure:"Reagent Store",quiet:"Cold Laboratory",rest:"Sealed Prep Room",merchant:"Lantern Bench"},
+    "Flooded Archives":{combat:"Drowned Stacks",hazard:"Flood Channel",lore:"Waterlogged Archive",treasure:"Sunken Store",quiet:"Dry Landing",rest:"Valve Shelter",merchant:"Ferryman's Niche"},
+    "Warden Depths":{combat:"Security Vault",hazard:"Seal Corridor",lore:"Warden Archive",treasure:"Military Vault",quiet:"Black Gallery",rest:"Locked Watchroom",merchant:"Lantern Outpost"}
+  };
+  return names[region]?.[kind] || "Unknown Chamber";
+}
+
+function chooseEnemy(region, highPressureAllowed){
+  let pool=["rat","skeleton","wolf","fungal"];
+  if(region==="Maintenance Galleries") pool=["skeleton","wolf","construct","battle"];
+  if(region==="Alchemical Laboratories") pool=["fungal","alchemist","thorn","battle"];
+  if(region==="Flooded Archives") pool=["fungal","wolf","choir","mirror"];
+  if(region==="Warden Depths") pool=["construct","battle","thorn","mirror","alchemist","choir"];
+  if(!highPressureAllowed) pool=pool.filter(x=>!["beastcaller","alchemist","choir"].includes(x));
+  return pick(pool);
+}
+function pushPressure(v){ state.pressureHistory.push(v); if(state.pressureHistory.length>8) state.pressureHistory.shift(); }
+
+function generateExits(){
+  const count = state.roomNo<5 ? 2 : (chance(.45)?3:2);
+  const clues=[];
+  while(clues.length<count){
+    const c=pick(DOOR_CLUES); if(!clues.includes(c)) clues.push(c);
+  }
+  return clues.map(clue=>({clue}));
+}
+function commitExit(ex){
+  if(state.currentRoom.dropped?.length){
+    openModal("Items left behind", "<p>You have left items in this room. Once you leave, you may not be able to return.</p>",[
+      {label:"REVIEW PACK",action:()=>{closeModal();switchTab("inventory");}},
+      {label:"LEAVE THEM",cls:"primary",action:()=>{closeModal();state.stats.choices.push("Left dropped items behind."); loseDroppedItems(); enterNextProcedural();}}
+    ]);
+    return;
+  }
+  state.stats.choices.push("Chose a door: "+ex.clue);
+  enterNextProcedural();
+}
+function loseDroppedItems(){ if(state?.currentRoom) state.currentRoom.dropped=[]; }
+
+function resolveStoryRoom(r){
+  if(r.storyKey==="rope"){
+    discover("Found recently used surface-made rope in the old prison."); state.routes.chain.known=true; state.routes.chain.evidence++;
+  } else if(r.storyKey==="chain"){
+    state.routes.chain.known=true; state.routes.chain.evidence+=2; giveItem("controlSeal",1,false); state.routes.chain.parts++; discover("Recovered a Warden Control Seal beside the Chain Lift machinery.");
+  } else if(r.storyKey==="pilgrim"){
+    state.routes.pilgrim.known=true; state.routes.pilgrim.evidence+=2; if(!hasItemKey("climbingKit")) giveItem("climbingKit",1,false); state.routes.pilgrim.parts++; discover("Learned the location of the Pilgrim Shaft and recovered climbing equipment.");
+  } else if(r.storyKey==="flood"){
+    state.routes.flood.known=true; state.routes.flood.evidence+=2; giveItem("floodKey",1,false); state.routes.flood.parts++; discover("Found Floodgate plans and a removable control keywheel.");
+  } else if(r.storyKey==="glass"){
+    state.routes.glass.known=true; state.routes.glass.evidence+=2; giveItem("calibrationLens",1,false); state.routes.glass.parts++; discover("Recovered a calibration lens for the Glass Gate.");
+  }
+  updateRouteStatuses(); r.resolved=true;
+  r.storyLines.forEach(x=>addNarrative(x));
+  state.skills.occult = Math.min(5,state.skills.occult+1);
+  addJournal(r.storyLines[0].replace(/<[^>]+>/g,""));
+  renderAll(); renderRoomChoices(); saveRun();
+}
+function searchQuietRoom(){
+  const r=state.currentRoom;r.resolved=true;r.searched=true;
+  if(chance(.42*DIFFICULTY[state.difficulty].loot)){ giveItem(chance(.5)?"bandage":"secondWind",1); addNarrative("Careful searching turns up a small usable supply.", "good"); }
+  else addNarrative("You find nothing worth carrying.");
+  renderAll();renderRoomChoices();saveRun();
+}
+function searchTreasureRoom(){
+  const r=state.currentRoom;r.searched=true;r.resolved=true;
+  const lootRoll=roll();
+  if(lootRoll<.24){ giveItem("redmoss",1); addNarrative("You recover a sealed Redmoss Restorative.", "good"); }
+  else if(lootRoll<.45){ giveItem("secondWind",1); addNarrative("A cloudy blue draught remains intact.", "good"); }
+  else if(lootRoll<.58){ giveItem("neutraliser",1); addNarrative("You find a labelled neutralising reagent.", "good"); }
+  else if(lootRoll<.73){
+    const a=makeItem(pick(["wardenToken","quietBell","huntersTooth","nightglass"])); a.knowledge="unknown"; addItemInstance(a); addNarrative("An amulet rests inside a padded case. Its purpose is not obvious.");
+  } else {
+    const p=makeItem("silverAmpoule"); p.knowledge="unknown"; p.trueVariant=chance(.55)?"safe_stamina":(chance(.5)?"raptor_delayed":"wolf_cumulative"); addItemInstance(p); addNarrative("You recover an unlabelled silver ampoule. It may be valuable. It may be dangerous.");
+  }
+  renderAll(); renderRoomChoices(); saveRun();
+}
+function resolveLoreRoom(){
+  const r=state.currentRoom;r.resolved=true;
+  const clues=[
+    "The Warden Mechanism was built to stop prisoners, creatures, experiments, and magical contamination moving freely between sectors.",
+    "Several maps disagree about where the surface lies. At least two 'upper lifts' terminate inside sealed rock.",
+    "A note from a Lantern alchemist warns that powerful magical items should be judged by evidence, not appearance.",
+    "One damaged order mentions fresh prisoners being delivered long after the original prison was abandoned."
+  ];
+  const line=pick(clues); addNarrative(line); addJournal(line); discover(line); state.skills.occult=Math.min(5,state.skills.occult+1);
+  renderAll();renderRoomChoices();saveRun();
+}
+function renderHazardChoices(){
+  const r=state.currentRoom;
+  addChoice("MOVE CAREFULLY","Slow down and use Survival knowledge.",()=>resolveHazard("careful"));
+  addChoice("FORCE THROUGH","Spend Stamina and get across quickly.",()=>resolveHazard("force"),"danger");
+  if(hasItemKey("listeningTube")) addChoice("USE TOOLS","Probe and listen before committing.",()=>resolveHazard("tool"),"special");
+}
+function resolveHazard(mode){
+  const r=state.currentRoom;r.resolved=true;
+  let p=mode==="tool"?.92:mode==="careful"?.72+.04*state.skills.survival:.58;
+  if(chance(p)){
+    addNarrative("You find the rhythm of the hazard and cross without serious harm.", "good");
+    state.skills.survival=Math.min(5,state.skills.survival+1);
+  } else {
+    const dmg=int(7,15)*(state.difficulty==="hard"?1.2:1);
+    damagePlayer(Math.round(dmg),"environmental hazard");
+    if(mode==="force") state.player.stamina=Math.max(0,state.player.stamina-18);
+    addNarrative("The room punishes the mistake before you can recover your footing.", "warning");
+  }
+  renderAll();renderRoomChoices();saveRun();
+}
+function restInRoom(){
+  const r=state.currentRoom;
+  const healAmt = 20 + state.skills.survival*3;
+  heal(healAmt); restoreStamina(100);
+  addNarrative("You secure the door, rest, and wake to the same underground silence.", "good");
+  tickTransformation("rest",2);
+  r.resolved=true;
+  renderAll();renderRoomChoices();saveRun();
+}
+
+function renderMerchantRoomChoices(){
+  addChoice("TRADE WITH MIRELLA","Buy supplies, identification, or treatment.",openMirellaShop,"special");
+  if(!state.currentRoom.askedLore) addChoice("ASK WHAT SHE KNOWS","Trade questions rather than gold.",askMirella);
+  addChoice("REST HERE","The Lantern markings make this safer than most rooms.",()=>restInRoom());
+  const exits=state.currentRoom.exits?.length?state.currentRoom.exits:generateExits(); state.currentRoom.exits=exits;
+  exits.slice(0,2).forEach((ex,i)=>addChoice(`TAKE ${i===0?"LEFT":"RIGHT"} EXIT`,ex.clue,()=>commitExit(ex),"door"));
+}
+function askMirella(){
+  state.currentRoom.askedLore=true;
+  addNarrative("\"The dungeon does not lie,\" Mirella says. \"People do. Mechanisms only follow old rules.\"");
+  if(!state.routes.chain.known){state.routes.chain.known=true;state.routes.chain.evidence++; addJournal("Mirella says the Chain Lift is real, though she does not know whether the upper gate still opens.");}
+  else addJournal("Mirella warned that treatment of a magical source and restoration of the body are not the same thing.");
+  renderAll();renderMerchantRoomChoices();saveRun();
+}
+function openMirellaShop(){
+  const unknowns=state.player.inventory.filter(i=>i.knowledge==="unknown").length+(state.player.amulet?.knowledge==="unknown"?1:0);
+  const body=`
+    <p>Mirella opens a leather case. \"Information costs less than regret.\"</p>
+    <div class="journal-entry"><strong>Bandage</strong><br><small>8 gold</small></div>
+    <div class="journal-entry"><strong>Redmoss Restorative</strong><br><small>18 gold</small></div>
+    <div class="journal-entry"><strong>Suppression Draught</strong><br><small>32 gold</small></div>
+    <div class="journal-entry"><strong>Weak Reversal Potion</strong><br><small>55 gold</small></div>
+    <div class="journal-entry"><strong>Skilled appraisal</strong><br><small>20 gold · ${unknowns} unknown item(s)</small></div>`;
+  openModal("Mirella — Lantern Coven",body,[
+    {label:"BANDAGE 8g",action:()=>buyItem("bandage",8)},
+    {label:"REDMOSS 18g",action:()=>buyItem("redmoss",18)},
+    {label:"SUPPRESSION 32g",action:()=>buyItem("suppression",32)},
+    {label:"REVERSAL 55g",action:()=>buyItem("reversal",55)},
+    {label:"APPRAISE 20g",action:appraiseUnknown},
+    {label:"DONE",cls:"primary",action:closeModal}
+  ]);
+}
+function buyItem(key,cost){
+  if(state.player.gold<cost){toast("Not enough gold.");return;}
+  if(!canFit(makeItem(key))){toast("Not enough backpack space.");return;}
+  state.player.gold-=cost; giveItem(key,1,false); renderAll(); openMirellaShop();
+}
+function appraiseUnknown(){
+  if(state.player.gold<20){toast("Not enough gold.");return;}
+  const candidates=[...state.player.inventory.filter(i=>i.knowledge==="unknown")];
+  if(state.player.amulet?.knowledge==="unknown") candidates.push(state.player.amulet);
+  if(!candidates.length){toast("You have nothing unknown to appraise.");return;}
+  state.player.gold-=20;
+  const item=candidates[0]; item.knowledge="reliable";
+  let note="Mirella identifies the item's ordinary function.";
+  if(item.type==="amulet"){
+    const def=ITEM_DB[item.key];
+    if(def.hiddenTf) note += ` She warns that prolonged wear can produce a ${def.hiddenTf.progressive?"progressive":"limited"} body-altering secondary effect associated with ${def.hiddenTf.species}-affinity magic.`;
+    else note += " She finds no body-altering effect in its enchantment.";
+  } else if(item.type==="mysteryPotion"){
+    const v=item.trueVariant;
+    if(v==="safe_heal"||v==="safe_stamina") note += " She finds no transformation signature.";
+    else if(v?.includes("wolf")) note += " She finds a beast-affinity residue that can accumulate with repeated compatible doses.";
+    else if(v?.includes("cat")) note += " She finds a delayed feline-affinity secondary reaction.";
+    else if(v?.includes("raptor")) note += " She finds a delayed raptor-affinity secondary reaction.";
+  }
+  addJournal(`Mirella appraised ${item.name}. ${note}`);
+  renderAll(); openMirellaShop();
+}
+
+function createEnemy(key){
+  const base=ENEMY_DB[key]; const d=DIFFICULTY[state.difficulty];
+  const e={...base,key,id:uid("e"),maxHp:Math.round(base.hp*d.enemyHp),hp:Math.round(base.hp*d.enemyHp),damage:Math.round(base.damage*d.enemyDmg),guard:base.guard,ward:0,status:{},intent:null,examined:false};
+  return e;
+}
+function startCombat(enemies,opts={}){
+  state.inCombat=true;
+  state.combat={enemies,round:1,canFlee:opts.canFlee!==false,onWinTag:opts.onWin===finishRoom2Combat?"room2":opts.onWin?state.currentRoom.id:null,playerDefending:false,playerEvading:false,lastAction:null};
+  state.currentRoom._onWin = opts.onWin ? true : false;
+  state.currentRoom._winHandler = opts.onWin===finishRoom2Combat?"room2":"generic";
+  state.currentNarrative.push("<span class='warning'>Combat begins.</span>");
+  enemies.forEach(e=>e.intent=chooseEnemyIntent(e));
+  tickTransformation("combat",1);
+  renderAll(); renderCombatChoices(); saveRun();
+}
+function renderCombatChoices(){
+  clearChoices(); renderEnemyPanel();
+  const living=state.combat.enemies.filter(e=>e.hp>0);
+  living.forEach(e=> addChoice(`ATTACK ${e.name}`,`Reliable attack.`,()=>playerAttack(e,false)));
+  living.forEach(e=> addChoice(`HEAVY — ${e.name}`,`Higher damage, 25 Stamina, lower accuracy. Can interrupt prepared actions.`,()=>playerAttack(e,true),"special"));
+  addChoice("DEFEND","Reduce incoming damage and recover 16 Stamina.",playerDefend);
+  addChoice("EVADE","Spend 20 Stamina to avoid telegraphed attacks.",playerEvade);
+  living.forEach(e=>addChoice(`EXAMINE ${e.name}`,"Read behaviour, weakness, and magical signs.",()=>playerExamine(e)));
+  addChoice("USE QUICK ITEM","Only quick-access items are reachable during combat.",openCombatItems);
+  if(state.combat.canFlee) addChoice("FLEE","Commit to an exit and abandon the room.",playerFlee,"danger");
+}
+function chooseEnemyIntent(e){
+  if(e.key==="skeleton") return pick(["attack","guard","heavy"]);
+  if(e.key==="wolf") return chance(.45)?"leap":"attack";
+  if(e.key==="rat") return chance(.2)?"flee":"attack";
+  if(e.key==="fungal") return chance(.35)?"spores":"attack";
+  if(e.key==="construct") return chance(.4)?"brace":(chance(.35)?"heavy":"attack");
+  if(e.key==="wardenKnight"){
+    if(e.status.charging) return "charge";
+    if(chance(.28)){e.status.charging=true; return "chargePrep";}
+    return chance(.35)?"guard":"attack";
+  }
+  if(e.archetype==="beastcaller"){
+    const beast=state.combat?.enemies.find(x=>x.summoned && x.hp>0);
+    if(!beast && chance(.55)) return "summon";
+    if(beast && chance(.42)) return "cast";
+    return chance(.28)?"hex":"attack";
+  }
+  if(e.archetype==="alchemist"){
+    if(e.hp<e.maxHp*.45 && chance(.25)) return "heal";
+    return chance(.45)?"potion":"attack";
+  }
+  if(e.archetype==="thorn") return chance(.38)?"hex":(chance(.2)?"cast":"attack");
+  if(e.archetype==="battle") return chance(.3)?"ward":(chance(.28)?"cast":"attack");
+  if(e.archetype==="choir") return chance(.4)?"resonance":(chance(.25)?"hex":"attack");
+  if(e.archetype==="mirror") return chance(.42)?"illusion":"attack";
+  return "attack";
+}
+function intentText(e){
+  const i=e.intent;
+  if(e.key==="skeleton"){
+    return {attack:"The skeleton draws its blade back for a short cut.",guard:"The skeleton raises its shield and braces.",heavy:"The skeleton lifts its sword high for a slow heavy swing."}[i];
+  }
+  if(e.key==="wolf") return i==="leap"?"The wolf lowers its body, preparing to leap.":"The wolf circles for a fast bite.";
+  if(e.key==="rat") return i==="flee"?"The rat backs toward a crack in the wall, looking for escape.":"The rat darts low toward your legs.";
+  if(e.key==="fungal") return i==="spores"?"The host swells. Pale spores gather around its split chest.":"The fungal host lurches forward.";
+  if(e.key==="construct") return i==="brace"?"The construct locks its plates together and braces.":i==="heavy"?"Its stone arm rises with deliberate force.":"The construct advances with a short mechanical strike.";
+  if(e.key==="wardenKnight") return i==="chargePrep"?"The Warden Knight lowers its shoulder and aligns itself with the length of the room.":i==="charge"?"The Knight launches into a crushing charge.":i==="guard"?"It seals its shield over the centre line.":"The Knight tests your guard with a precise cut.";
+  if(e.archetype==="thorn") return i==="hex"?"The Thorn Hexer points at your shadow. Barbed roots crawl across the floor toward your feet.":i==="cast"?"The Thorn Hexer crushes a seed-black charm. Something wild gathers in the air.":"The Thorn Hexer lashes out with green-black force.";
+  if(e.archetype==="battle") return i==="ward"?"The Battle Witch slams one forearm across her chest. Red runes begin locking together.":i==="cast"?"The Battle Witch draws a burning combat rune through the air.":"The Battle Witch drives a compact blast of red force toward your guard.";
+  if(e.archetype==="alchemist") return i==="potion"?"The Alchemist Witch selects an unlabelled vial, swirls it once, and measures the distance to you.":i==="heal"?"The Alchemist Witch tears the seal from a crimson dose.":"The Alchemist Witch flicks volatile blue fire from a reagent-stained hand.";
+  if(e.archetype==="choir") return i==="resonance"?"The Pale Choir witch tilts her head. A thin note rises until your teeth begin to ache.":i==="hex"?"She sings your footsteps back to you. Your shadow slips out of rhythm.":"A shriek compresses into a hammering wave of force.";
+  if(e.archetype==="mirror") return i==="illusion"?"The Mirror Witch smiles — and the room seems to acquire two more identical smiles.":"Her voice comes from behind you while her body remains ahead.";
+  if(e.archetype==="beastcaller") return i==="summon"?"The Beastcaller Witch whistles into the darkness. Something answers with claws on stone.":i==="cast"?"The Beastcaller raises a claw-marked charm. Your heartbeat seems to match something prowling nearby.":i==="hex"?"A hunting mark appears beneath your feet.":"The Beastcaller hurls a crescent of pale force shaped like a lunging jaw.";
+  if(e.summoned) return "The summoned beast crouches, ready to strike.";
+  return "It prepares to attack.";
+}
+function playerAttack(target,heavy){
+  if(target.hp<=0)return;
+  const stats=derivedStats();
+  const staminaCost=heavy?25:0;
+  if(state.player.stamina<staminaCost){ addNarrative("You do not have enough Stamina.", "system"); renderCombatChoices(); return; }
+  state.player.stamina-=staminaCost;
+  const acc=clamp(stats.accuracy+(heavy?-12:0)+(target.status.exposed?12:0),15,95);
+  let damage=0,hit=chance(acc/100);
+  if(hit){
+    damage=Math.max(1,Math.round(stats.damage*(heavy?1.65:1)*(0.86+roll()*.28)-target.guard-(target.ward||0)));
+    if(derivedStats().crit>0 && chance(derivedStats().crit)) damage=Math.round(damage*1.6);
+    target.hp=Math.max(0,target.hp-damage);
+    addNarrative(`${heavy?"Your heavy attack":"Your attack"} hits ${esc(target.name)} for <strong>${damage}</strong> damage.`);
+    if(heavy && ["summon","cast","hex","potion","resonance","chargePrep"].includes(target.intent) && damage>=10){
+      target.status.interrupted=true;
+      if(target.intent==="chargePrep") target.status.charging=false;
+      addNarrative(`${esc(target.name)}'s prepared action breaks apart before it can resolve.`, "good");
+    }
+  } else addNarrative(`${heavy?"The heavy swing":"Your attack"} misses ${esc(target.name)}.`);
+  if(target.status.exposed) target.status.exposed=false;
+  wearEquipment(heavy?1.4:0.8);
+  afterPlayerAction();
+}
+function playerDefend(){
+  state.combat.playerDefending=true; restoreStamina(16); addNarrative("You set your stance, protect your centre, and recover some Stamina."); afterPlayerAction();
+}
+function playerEvade(){
+  if(state.player.stamina<20){addNarrative("You do not have enough Stamina to Evade.", "system");renderCombatChoices();return;}
+  state.player.stamina-=20;state.combat.playerEvading=true; addNarrative("You keep light on your feet, waiting for the telegraphed attack."); afterPlayerAction();
+}
+function playerExamine(e){
+  e.examined=true; const details=[];
+  details.push(`Health ${Math.ceil(e.hp/e.maxHp*100)}%`);
+  if(e.guard>=8) details.push("heavy defence");
+  if(e.speed>=13) details.push("fast");
+  if(e.kind==="witch") details.push(`${e.archetype} witch`);
+  if(e.key==="wardenKnight") {details.push("charge may expose it if it misses"); e.status.weaknessKnown=true;}
+  if(e.key==="construct") details.push("predictable joints; interruption is effective after a heavy motion");
+  if(e.archetype==="beastcaller") details.push("prepared SUMMON / CAST can be interrupted by a strong Heavy Attack");
+  if(e.archetype==="alchemist") details.push("not every thrown mixture has the same effect");
+  addNarrative(`You study ${esc(e.name)}: <em>${details.join("; ")}.</em>`, "system");
+  state.skills.combat=Math.min(5,state.skills.combat+1);
+  afterPlayerAction();
+}
+function openCombatItems(){
+  const items=state.player.inventory.filter(i=>state.player.quick.includes(i.uid));
+  if(!items.length){toast("No quick-access items are assigned.");return;}
+  const actions=items.map(i=>({label:`USE ${i.name}`,action:()=>{closeModal();useInventoryItem(i.uid,true);}}));
+  actions.push({label:"CANCEL",action:closeModal});
+  openModal("Quick-access items","<p>Choose one item. Using it spends your combat action.</p>",actions);
+}
+function playerFlee(){
+  const dmg=chance(.35)?int(3,8):0;
+  if(dmg) damagePlayer(dmg,"attack while fleeing");
+  state.inCombat=false;state.combat=null;
+  addNarrative("You abandon the room and commit to the nearest open passage.", "warning");
+  loseDroppedItems(); enterNextProcedural();
+}
+function afterPlayerAction(){
+  const living=state.combat.enemies.filter(e=>e.hp>0);
+  if(!living.length){ endCombatWin(); return; }
+  resolveEnemyActions();
+  if(!state || state.ended || !state.inCombat) return;
+  state.combat.round++;
+  state.combat.playerDefending=false; state.combat.playerEvading=false;
+  state.combat.enemies.filter(e=>e.hp>0).forEach(e=>{e.status.interrupted=false;e.intent=chooseEnemyIntent(e);});
+  renderAll(); renderCombatChoices(); saveRun();
+}
+function resolveEnemyActions(){
+  const enemies=[...state.combat.enemies].filter(e=>e.hp>0).sort((a,b)=>b.speed-a.speed);
+  for(const e of enemies){
+    if(state.player.hp<=0) break;
+    if(e.hp<=0)continue;
+    if(e.status.interrupted){ addNarrative(`${esc(e.name)} loses the prepared action.`,"good"); continue; }
+    resolveEnemyIntent(e);
+  }
+  tickTransformation("combatRound",1);
+}
+function resolveEnemyIntent(e){
+  const i=e.intent;
+  if(i==="guard"||i==="brace"||i==="ward"){
+    e.ward = i==="ward"?7:i==="brace"?6:4;
+    addNarrative(`${esc(e.name)} strengthens its defence.`);
+    return;
+  }
+  e.ward=0;
+  if(i==="heal"){const h=Math.round(e.maxHp*.22);e.hp=Math.min(e.maxHp,e.hp+h);addNarrative(`The Alchemist Witch drinks a measured crimson dose and recovers ${h} Health.`);return;}
+  if(i==="summon"){beastcallerSummon(e);return;}
+  if(i==="cast"&&e.archetype==="beastcaller"){beastcallerCast(e);maybeBeastFollowup();return;}
+  if(i==="hex"&&e.archetype==="beastcaller"){state.player.stamina=Math.max(0,state.player.stamina-int(10,20));addNarrative("The hunting mark drags at your muscles. Stamina drains away.","warning");maybeBeastFollowup();return;}
+  if(i==="potion"&&e.archetype==="alchemist"){alchemistPotionAttack(e);return;}
+  if(i==="resonance"&&e.archetype==="choir"){choirResonance(e);return;}
+  if(i==="illusion"&&e.archetype==="mirror"){
+    addNarrative("Three identical images split apart. Only one disturbs the dust, but the movement is hard to follow.");
+    state.player.temp.confused=2; return;
+  }
+  if(i==="hex"&&e.archetype==="thorn"){
+    const resisted=resolveCheck();
+    if(resisted){addNarrative("You wrench your shadow free before the thorn-curse can fasten itself.","good");}
+    else {state.player.stamina=Math.max(0,state.player.stamina-14);addNarrative("Barbed roots bite into your shadow. Your legs turn heavy.","warning"); if(chance(.14)) establishTransformation("reptile","rooted thorn curse",4,false);}
+    return;
+  }
+  if(i==="cast"&&e.archetype==="thorn"){
+    const resisted=resolveCheck();
+    if(resisted)addNarrative("The wild pressure reaches for your bones, but you force it back.","good");
+    else {addNarrative("Something wild claws through your nerves, then goes still.","warning"); if(chance(.22)) establishTransformation("reptile","thorn body-altering charm",6,true);}
+    return;
+  }
+  if(i==="cast"&&e.archetype==="battle"){enemyAttack(e,1.25,"A brutal wave of red force punches through your guard.");return;}
+  if(i==="hex"&&e.archetype==="choir"){state.player.stamina=Math.max(0,state.player.stamina-13);addNarrative("The chorus catches your name and drains strength from your legs.","warning");return;}
+  if(i==="spores"){enemyAttack(e,.65,"Spores burst around you in a pale cloud."); if(chance(.25)) addInjury("Magical Fatigue");return;}
+  if(i==="chargePrep"){ addNarrative("The Knight commits to the line of the charge. The next movement will be violent."); return; }
+  if(i==="charge"){
+    e.status.charging=false;
+    if(state.combat.playerEvading && chance(.82)){
+      addNarrative("You slip aside. The Warden Knight smashes into a stone rib and exposes its back.","good");
+      e.status.exposed=true; return;
+    }
+    enemyAttack(e,1.65,"The Warden Knight crashes through your position.");
+    return;
+  }
+  if(i==="heavy"){enemyAttack(e,1.45,`${e.name} brings a heavy attack down.`);return;}
+  if(i==="leap"){enemyAttack(e,1.35,"The wolf explodes forward in a full-body leap.");return;}
+  if(i==="flee"){e.hp=0;addNarrative("The rat vanishes through a crack in the wall.");return;}
+  enemyAttack(e,1,`${e.name} attacks.`);
+  if(e.archetype==="beastcaller") maybeBeastFollowup();
+}
+function enemyAttack(e,mult,line){
+  let evadeChance=0;
+  const stats=derivedStats();
+  if(state.combat.playerEvading) evadeChance=.58+(stats.dodge||0)+(e.intent==="heavy"||e.intent==="leap"?.16:0);
+  if(state.player.temp.confused>0){evadeChance-=.15;state.player.temp.confused--;}
+  if(chance(clamp(evadeChance,0,.9))){addNarrative(`${line} You evade it cleanly.`,"good");return;}
+  let dmg=Math.max(1,Math.round(e.damage*mult*(.88+roll()*.24)-stats.guard*.38));
+  if(state.combat.playerDefending) dmg=Math.ceil(dmg*.52);
+  damagePlayer(dmg,e.name);
+  addNarrative(`${line} You take <strong>${dmg}</strong> damage.`,"warning");
+  if(dmg>=12) tickTransformation("damage",2);
+}
+function beastcallerSummon(e){
+  const kinds=[
+    {name:"Scarred Spectral Wolf",hp:18,damage:6,species:"wolf"},
+    {name:"Pale Stalker",hp:16,damage:5,species:"cat"},
+    {name:"Razor Raptor",hp:15,damage:7,species:"raptor"}
+  ];
+  const b=pick(kinds),d=DIFFICULTY[state.difficulty];
+  const enemy={id:uid("e"),key:"summoned",name:b.name,hp:Math.round(b.hp*d.enemyHp),maxHp:Math.round(b.hp*d.enemyHp),damage:Math.round(b.damage*d.enemyDmg),guard:1,speed:14,kind:"beast",summoned:true,species:b.species,status:{},intent:"attack",examined:false};
+  state.combat.enemies.push(enemy); e.currentBeastSpecies=b.species;
+  addNarrative(`${b.name==="Scarred Spectral Wolf"?"A scarred spectral wolf tears itself out of the darkness.":b.name==="Pale Stalker"?"The witch's shadow stretches sideways. A pale long-limbed shape unfolds from it.":"The summoning mark splits open and a razor-clawed raptor tears through the pale lines."}`,"warning");
+}
+function beastcallerCast(e){
+  const beast=state.combat.enemies.find(x=>x.summoned&&x.hp>0);
+  if(!beast){enemyAttack(e,1,"The Beastcaller hurls a crescent of pale force.");return;}
+  if(chance(.45)){
+    if(resolveCheck(.05)){addNarrative("The claw-marked curse presses against you, but your resolve breaks its hold.","good");}
+    else if(chance(.65)){
+      addNarrative("The Beastcaller snarls a name that is not yours. Something inside your body answers it.","warning");
+      establishTransformation(beast.species,`Beastcaller curse linked to ${beast.name}`,12,true,true);
+    }else addNarrative("The curse sinks against you, then slips away without taking hold.","system");
+  } else enemyAttack(e,1,"The Beastcaller hurls a crescent of pale force shaped like a lunging jaw.");
+}
+function maybeBeastFollowup(){
+  const beast=state.combat.enemies.find(x=>x.summoned&&x.hp>0);
+  if(beast&&chance(.55)) enemyAttack(beast,1,"The summoned beast follows the witch's movement and strikes.");
+}
+function alchemistPotionAttack(e){
+  const tfRoll=chance(.20);
+  if(state.combat.playerEvading&&chance(.58+derivedStats().dodge)){addNarrative("The cloudy flask bursts against the wall behind you.","good");return;}
+  const dmg=int(2,6); if(dmg)damagePlayer(dmg,"Alchemist splash");
+  addNarrative("A cloudy amber flask bursts across your shoulder. Your skin tingles sharply for several seconds, then the feeling fades.","warning");
+  if(tfRoll){
+    const species=pick(["wolf","cat","raptor","reptile"]);
+    exposeTransformation(species,2,"unknown alchemical splash");
+  } else if(chance(.35)) state.player.stamina=Math.max(0,state.player.stamina-12);
+}
+function choirResonance(e){
+  if(state.combat.playerEvading&&chance(.38)){addNarrative("You break the rhythm before the note can settle into you.","good");return;}
+  state.player.stamina=Math.max(0,state.player.stamina-10);
+  addNarrative("A many-voiced pressure passes through your body and leaves an unfamiliar echo behind.","warning");
+  exposeTransformation(pick(["cat","wolf","raptor"]),1,"Pale Choir resonance");
+}
+function resolveCheck(bonus=0){ return chance(clamp((derivedStats().resolve/20)*.55+.25+bonus, .2,.85)); }
+
+function endCombatWin(){
+  state.inCombat=false;
+  state.stats.combatsWon++;
+  const r=state.currentRoom;
+  const gold=int(4,12)+(r.boss?int(10,22):0); state.player.gold+=gold;
+  addNarrative(`The room falls quiet. You recover ${gold} gold from what remains.`, "good");
+  if(chance(.28*DIFFICULTY[state.difficulty].loot)) giveItem(chance(.55)?"bandage":"secondWind",1,false);
+  state.skills.combat=Math.min(5,state.skills.combat+(r.boss?1:0));
+  if(r.id==="room2") finishRoom2Combat();
+  else finishGenericCombat(r);
+}
+function finishGenericCombat(r){
+  r.resolved=true;
+  if(r.boss){
+    if(r.id==="boss_16" && !hasItemKey("wardenToken")){ const a=makeItem("wardenToken");a.knowledge="partial";addItemInstance(a,false);addNarrative("A Warden's Token drops from the construct's inner housing.","good");}
+    if(r.id==="boss_24"){giveItem("suppression",1,false);discover("Survived a Pale Choir crossing and recovered a suppression draught.");}
+    if(r.id==="boss_26"){giveItem("neutraliser",1,false);discover("Survived the Beast Pens and learned the Beastcaller's summoned forms are tied to her curse.");}
+    if(r.id==="finale"){
+      state.flags.wardenKnightDefeated=true; state.routes.chain.evidence++; state.routes.chain.parts++; updateRouteStatuses();
+      addNarrative("The Knight collapses. The Warden Core opens access to the upper mechanisms. Several old routes can now be attempted.","good");
+      renderAll();renderFinaleChoices();saveRun();return;
+    }
+  }
+  renderAll();renderRoomChoices();saveRun();
+}
+
+function renderFinaleChoices(){
+  clearChoices();
+  const available=[];
+  Object.entries(state.routes).forEach(([k,r])=>{ if(r.known && (r.evidence+r.parts)>=2) available.push([k,r]); });
+  if(!available.length){ state.routes.chain.known=true; state.routes.chain.evidence=2; available.push(["chain",state.routes.chain]); }
+  available.forEach(([k,r])=>addChoice(`ATTEMPT ${r.name.toUpperCase()}`,routeEndingHint(k),()=>completeEnding(k),"special"));
+  addChoice("TOUCH THE WARDEN CONTROLS","Decide whether to leave the mechanism active.",()=>toggleWardenChoice());
+}
+function routeEndingHint(k){
+  return {
+    chain:"Use the recovered seal and core access to bring the cargo lift toward the upper gate.",
+    pilgrim:"Use climbing equipment and the temple records to seek the narrow shaft upward.",
+    flood:"Open the old water-management tunnel and commit to the one-way descent.",
+    glass:"Calibrate the ancient transport system and trust the evidence you gathered."
+  }[k];
+}
+function toggleWardenChoice(){
+  state.flags.shutdownWarden=!state.flags.shutdownWarden;
+  addNarrative(state.flags.shutdownWarden?"You begin shutting down part of the Warden Mechanism before leaving. Doors throughout the dungeon answer with distant thunder.":"You reverse the shutdown. The Warden Mechanism remains active behind you.");
+  renderAll();renderFinaleChoices();
+}
+function completeEnding(routeKey){
+  const r=state.routes[routeKey]; state.ended=true;
+  const form=visibleForm();
+  const routeText={
+    chain:"The Chain Lift groans upward through centuries of rust. It stops twice in darkness, then once more beneath a gate that finally gives way to cold night air.",
+    pilgrim:"The Pilgrim Shaft is worse than the records promised. The last climb tears your hands raw, but the stone above eventually gives way to rain.",
+    flood:"The Floodgate opens with a roar. You ride black water through a tunnel that seems determined to drown you, then break surface beneath an open sky.",
+    glass:"The Glass Gate fills with white depth. For one terrible second you are nowhere. Then wet grass replaces stone under your feet."
+  }[routeKey];
+  const tfLine=form==="Human"?"You emerge completely human.":form==="Transformed"?"You emerge in a fully transformed body, but with your memory, identity, and purpose intact.":`You emerge ${form.toLowerCase()}, carrying the consequences of choices made below.`;
+  const mech=state.flags.shutdownWarden?"Behind you, part of the Warden Mechanism falls silent.":"Far below, the Warden Mechanism continues its patient work.";
+  storageRemove(SAVE_KEY);
+  openModal("YOU ESCAPED",`<p>${routeText}</p><p>${tfLine}</p><p>${mech}</p><div class="journal-entry"><strong>Run summary</strong><br><small>${state.stats.combatsWon} combats won · ${state.stats.majorDiscoveries} major discoveries · Form: ${form}</small></div>`,[
+    {label:"NEW RUN",cls:"primary",action:()=>{closeModal();location.reload();}}
+  ]);
+}
+
+function damagePlayer(amount,cause){
+  state.player.hp=Math.max(0,state.player.hp-amount);
+  if(state.player.hp<=0){ die(cause); }
+}
+function heal(amount){ state.player.hp=Math.min(state.player.maxHp,state.player.hp+Math.round(amount)); }
+function restoreStamina(amount){ state.player.stamina=Math.min(state.player.maxStamina,state.player.stamina+Math.round(amount)); }
+function addInjury(name){ if(!state.player.injuries.includes(name))state.player.injuries.push(name); }
+function die(cause){
+  if(state.ended)return;
+  state.ended=true;state.inCombat=false;storageRemove(SAVE_KEY);
+  const form=visibleForm();
+  const discoveries=state.discoveries.slice(-5).map(x=>`<li>${esc(x)}</li>`).join("");
+  openModal("YOU DIED",`<p class="death-title">Cause: ${esc(cause)}</p><p>Final room: ${esc(state.currentRoom?.title||"Unknown")}</p><p>Form at death: <strong>${form}</strong></p><p>Major discoveries:</p><ul>${discoveries||"<li>None confirmed.</li>"}</ul><p>The summary does not reveal hidden item effects or undiscovered transformation data.</p>`,[
+    {label:"NEW RUN",cls:"primary",action:()=>{closeModal();location.reload();}}
+  ]);
+}
+
+function derivedStats(){
+  const p=state.player; let guard=p.baseGuard,damage=p.baseDamage,accuracy=p.baseAccuracy,speed=p.baseSpeed,resolve=p.baseResolve,dodge=0,crit=0;
+  if(p.weapon){damage+=p.weapon.damage||0;accuracy+=p.weapon.accuracy||0;const c=conditionFactor(p.weapon.condition);damage=Math.round(damage*c);}
+  if(p.armour){guard+=Math.round((p.armour.guard||0)*conditionFactor(p.armour.condition));}
+  if(p.amulet){
+    const d=ITEM_DB[p.amulet.key];
+    guard=Math.round(guard*(1+(d.guardPct||0)));damage=Math.round(damage*(1+(d.damagePct||0)));resolve=Math.round(resolve*(1+(d.resolvePct||0)));
+    dodge+=d.dodgePct||0;crit+=d.crit||0;
+  }
+  if(state.tf.active){
+    if(state.tf.species==="cat"&&state.tf.stage>=3)dodge+=.08;
+    if(state.tf.species==="wolf"&&state.tf.stage>=5)damage+=2;
+    if(state.tf.species==="raptor"&&state.tf.stage>=5){speed+=2;crit+=.05;}
+    if(state.tf.species==="reptile"&&state.tf.stage>=3)guard+=2;
+  }
+  if(p.temp.speedBuff>0) speed+=3; if(p.temp.accuracyBuff>0) accuracy+=12; if(p.temp.damageBuff>0) damage+=3;
+  if(p.injuries.includes("Magical Fatigue")) resolve=Math.max(3,resolve-2);
+  return {guard,damage,accuracy,speed,resolve,dodge,crit};
+}
+function conditionFactor(cond=100){ if(cond<=0)return .25;if(cond<25)return .62;if(cond<50)return .82;return 1; }
+function wearEquipment(mult=1){
+  const d=DIFFICULTY[state.difficulty].wear;
+  [state.player.weapon,state.player.armour].filter(Boolean).forEach(it=>{ if(chance(.22*d*mult))it.condition=Math.max(0,(it.condition??100)-int(1,3));});
+}
+
+function makeItem(key){
+  const d=ITEM_DB[key]; return {uid:uid("item"),key,name:d.name,type:d.type,size:d.size,qty:1,knowledge:d.hiddenTf||d.type==="mysteryPotion"?"unknown":"reliable",condition:(d.type==="weapon"||d.type==="armour")?100:undefined,damage:d.damage,accuracy:d.accuracy,guard:d.guard};
+}
+function giveItem(key,qty=1,announce=true){
+  for(let n=0;n<qty;n++){
+    const d=ITEM_DB[key];
+    if(d.stack){
+      const ex=state.player.inventory.find(i=>i.key===key);
+      if(ex){ex.qty++;if(announce)addNarrative(`You take ${d.name}.`,"good");continue;}
+    }
+    const it=makeItem(key); if(!addItemInstance(it,announce)) return false;
+  }
+  return true;
+}
+function addItemInstance(it,announce=true){
+  if(it.type==="quest"){ state.flags["quest_"+it.key]=true; if(announce)addNarrative(`You secure ${it.name}.`,"good"); return true; }
+  if(!canFit(it)){
+    state.currentRoom.dropped.push(it);
+    addNarrative(`Your pack is full. ${it.name} remains in the room.`, "warning");
+    return false;
+  }
+  state.player.inventory.push(it); if(announce)addNarrative(`You take ${it.name}.`,"good"); return true;
+}
+function canFit(it){ return usedSlots()+it.size<=state.player.capacity; }
+function usedSlots(){ return state.player.inventory.reduce((sum,i)=>sum+(i.size||0),0); }
+function hasItemKey(key){ return !!state.flags["quest_"+key] || state.player.inventory.some(i=>i.key===key) || state.player.weapon?.key===key || state.player.armour?.key===key || state.player.amulet?.key===key; }
+
+function useInventoryItem(uidVal,inCombat=false){
+  const i=state.player.inventory.find(x=>x.uid===uidVal); if(!i)return;
+  const def=ITEM_DB[i.key];
+  if(inCombat&&!state.player.quick.includes(i.uid)){toast("That item is not in a quick-access slot.");return;}
+  if(i.type==="weapon"||i.type==="armour"||i.type==="amulet"){equipItem(i);return;}
+  if(i.type==="mysteryPotion"){useMysteryPotion(i);}
+  else if(def.use){
+    const result=def.use(state);
+    if(result===false){renderAll();return;}
+  } else {toast("This item has no direct use here.");return;}
+  consumeItem(i);
+  renderAll();
+  if(inCombat&&state.inCombat) afterPlayerAction(); else saveRun();
+}
+function consumeItem(i){
+  if(i.qty>1)i.qty--;else{state.player.inventory=state.player.inventory.filter(x=>x.uid!==i.uid);state.player.quick=state.player.quick.filter(x=>x!==i.uid);}
+}
+function equipItem(i){
+  if(state.inCombat){toast("You cannot reorganise equipment while an attack is resolving.");return;}
+  if(i.type==="weapon"){ if(state.player.weapon)state.player.inventory.push(state.player.weapon); state.player.weapon=i; }
+  else if(i.type==="armour"){ if(state.player.armour)state.player.inventory.push(state.player.armour); state.player.armour=i; }
+  else if(i.type==="amulet"){ if(state.player.amulet)state.player.inventory.push(state.player.amulet); state.player.amulet=i; }
+  state.player.inventory=state.player.inventory.filter(x=>x.uid!==i.uid);
+  addNarrative(`You equip ${i.name}.`);
+  renderAll();saveRun();
+}
+function unequip(slot){
+  if(state.inCombat){toast("You cannot reorganise equipment in combat.");return;}
+  const i=state.player[slot];if(!i)return;if(!canFit(i)){toast("No room in the backpack.");return;}
+  state.player.inventory.push(i);state.player[slot]=null;addNarrative(`You remove ${i.name}.`);renderAll();saveRun();
+}
+function toggleQuick(i){
+  if(!ITEM_DB[i.key].quick){toast("That item is not suitable for quick access.");return;}
+  const idx=state.player.quick.indexOf(i.uid);
+  if(idx>=0) state.player.quick.splice(idx,1);
+  else if(state.player.quick.length<state.player.quickCapacity) state.player.quick.push(i.uid);
+  else {toast("No free quick-access slot.");return;}
+  renderAll();saveRun();
+}
+function dropItem(i){
+  if(i.type==="quest"){toast("This route-critical object cannot be casually dropped.");return;}
+  state.player.inventory=state.player.inventory.filter(x=>x.uid!==i.uid);state.player.quick=state.player.quick.filter(x=>x!==i.uid);state.currentRoom.dropped.push(i);
+  renderAll();saveRun();
+}
+function pickUpDropped(i){
+  if(!canFit(i)){toast("Not enough backpack space.");return;}
+  state.currentRoom.dropped=state.currentRoom.dropped.filter(x=>x.uid!==i.uid);state.player.inventory.push(i);renderAll();saveRun();
+}
+function useMysteryPotion(i){
+  const v=i.trueVariant || (chance(.6)?"safe_heal":"wolf_cumulative");
+  if(i.knowledge==="unknown") addJournal(`Drank ${i.name}. Immediate effects were observed, but any secondary properties remain uncertain.`);
+  if(v==="safe_heal"){heal(28);addNarrative("The potion warms your chest and closes some of the pain in your wounds.","good");}
+  else if(v==="safe_stamina"){restoreStamina(55);addNarrative("A metallic chill clears the heaviness from your limbs.","good");}
+  else if(v==="cat_speed"){state.player.temp.speedBuff=4;restoreStamina(15);addNarrative("Your balance feels remarkably precise. Movement comes more easily.","good");exposeTransformation("cat",2,`${i.name} delayed reaction`);}
+  else if(v==="raptor_delayed"){state.player.temp.accuracyBuff=4;addNarrative("Your hands feel suddenly steady and exact.","good");exposeTransformation("raptor",2,`${i.name} delayed reaction`);}
+  else if(v==="wolf_cumulative"){heal(10);state.player.temp.damageBuff=4;addNarrative("Heat spreads into your muscles. For a while, you feel stronger.","good");exposeTransformation("wolf",2,`${i.name} cumulative reaction`);}
+}
+function identifyItem(i){
+  if(state.inCombat){toast("There is no time for careful testing in combat.");return;}
+  if(i.knowledge==="reliable"){toast("You already know this item as reliably as your current tools allow.");return;}
+  if(i.type==="amulet"){
+    const d=ITEM_DB[i.key];
+    i.knowledge="partial";
+    addJournal(`${i.name}: the primary enchantment is clear. ${d.hiddenTf?"Extended contact produces an unusual secondary magical signature; exact consequences remain uncertain.":"No suspicious secondary signature was found by this simple examination."}`);
+  }else if(i.type==="mysteryPotion"){
+    i.knowledge="partial";
+    addJournal(`${i.name}: simple testing identifies a useful alchemical effect, but the long-term reaction remains uncertain.`);
+  }
+  state.skills.occult=Math.min(5,state.skills.occult+1);renderAll();saveRun();
+}
+
+function exposeTransformation(species,amount,source){
+  state.tf.exposurePools[species]=(state.tf.exposurePools[species]||0)+amount;
+  state.tf.recentExposure={species,source};state.tf.recentExposureRooms=0;
+  addEvidence("A suspicious magical exposure occurred.", "Source uncertain. No exact effect is known yet.");
+  const threshold=5+int(0,2);
+  if(state.tf.exposurePools[species]>=threshold && chance(.58)) establishTransformation(species,source,12,true,false);
+}
+function establishTransformation(species,source,maxStage=12,progressive=true,obviousSpecies=false){
+  const tf=state.tf;
+  if(tf.active&&tf.species&&tf.species!==species){
+    addNarrative("The new magic clashes with something already present. Nausea and magical fatigue follow, but your body does not abruptly become a hybrid.","warning");
+    addInjury("Magical Fatigue"); return;
+  }
+  if(!tf.active){
+    tf.active=true;tf.species=species;tf.source=source;tf.maxStage=maxStage;tf.progress=0;tf.latency=int(1,3);tf.knownSpecies=obviousSpecies;
+    addEvidence(obviousSpecies?`A body-altering curse associated with a ${species}-like source appeared to take hold.`:"Something unfamiliar seems to have remained after a magical exposure.", obviousSpecies?"Connection plausible. Exact progress unknown.":"Source and outcome uncertain.");
+  }else{
+    tf.maxStage=Math.max(tf.maxStage,maxStage);tf.progress+=2;
+  }
+}
+function tickRoomSystems(){
+  const tf=state.tf;
+  if(tf.suppressionRooms>0)tf.suppressionRooms--;
+  tf.recentExposureRooms++;
+  Object.keys(state.player.temp).forEach(k=>{ if(typeof state.player.temp[k]==="number"&&state.player.temp[k]>0)state.player.temp[k]--; });
+  if(state.player.amulet){
+    const d=ITEM_DB[state.player.amulet.key];
+    if(d.hiddenTf?.mode==="wear"){
+      const w=tf.wear[state.player.amulet.uid]||0;tf.wear[state.player.amulet.uid]=w+1;
+      if(w+1>=4){
+        const p=clamp(.06+(w-3)*.055,.06,.42);
+        if(chance(p)) establishTransformation(d.hiddenTf.species,`${state.player.amulet.name} prolonged wear`,d.hiddenTf.maxStage,d.hiddenTf.progressive,false);
+      }
+    }
+  }
+  tickTransformation("room",1);
+}
+function tickTransformation(trigger,intensity=1){
+  const tf=state.tf;if(!tf.active)return;
+  if(tf.latency>0){tf.latency--; if(tf.latency===0)addSymptom(1); return;}
+  if(tf.suppressionRooms>0)return;
+  let gain=intensity;
+  if(trigger==="damage")gain+=1;
+  if(trigger==="rest")gain+=chance(.5)?1:0;
+  if(trigger==="combatRound"&&chance(.5))gain=0;
+  tf.progress+=gain;
+  const threshold=4+Math.floor(tf.stage/3);
+  if(tf.progress>=threshold && tf.stage<tf.maxStage && tf.lastStageRoom!==state.roomNo){
+    tf.stage++;tf.progress=0;tf.lastStageRoom=state.roomNo;addSymptom(tf.stage);
+  }
+}
+function addSymptom(stage){
+  const species=state.tf.species;
+  const tables={
+    wolf:["You hear a faint scrape beyond the next wall more clearly than you should.","Your teeth ache when you bite down.","Pressure builds along the upper edges of your ears.","Coarser hair catches under your fingers at the back of your neck.","The smell of old blood in the stone becomes impossible to ignore.","Your hands feel subtly wrong around the weapon grip.","Your posture keeps settling forward before you correct it.","Boots and gloves begin to fit badly.","Movement comes with an unfamiliar predatory efficiency.","Your face no longer rests comfortably in familiar expressions.","Human proportions are becoming difficult to maintain.","Your body settles into the new shape completely."],
+    cat:["Dark corners seem to contain more detail than they did before.","Your balance catches itself before you consciously move.","Your pupils tighten strangely in bright light.","A pressure develops around your ears and temples.","Your steps land with less sound than expected.","Your feet feel wrong inside rigid boots.","Your spine keeps finding a lower, more balanced posture.","Clothing begins to pull against changing proportions.","Movement becomes quick in ways your equipment was not made for.","Your face and hands are unmistakably altered.","Only traces of your old silhouette remain.","Your body settles fully into the feline shape."],
+    raptor:["Your fingers cramp after gripping the weapon.","Your balance shifts forward for no obvious reason.","Your nails feel unusually hard against stone.","Pain pulses through the bones of your feet.","Your grip becomes stronger but less delicate.","Gloves resist the shape of your hands.","Your stance changes to accommodate different leverage.","Boots become a serious problem.","Fast movement feels natural; fine manipulation does not.","Your limbs no longer move with human proportions.","Your silhouette is almost entirely unfamiliar.","The transformation reaches its full physical form."],
+    reptile:["A patch of skin feels oddly cool and insensitive.","Tiny hard ridges catch under your fingertips.","A faint scale pattern shows when the light hits your forearm.","Heat from a nearby pipe bothers you less than it should.","The scaled patches thicken and spread.","Flexibility starts to suffer where the skin has hardened.","Your hands and posture begin to change around the growing armour.","Ordinary clothing no longer sits correctly.","Natural armour changes how you brace against impact.","Very little of your skin looks unchanged.","Your body is near a complete non-human form.","The scaled transformation reaches its full physical extent."],
+    fox:["You catch movement at the edge of hearing before seeing it.","Your footsteps seem too quiet.","Pressure gathers around your ears and lower spine.","Balance improves while clothing starts to feel awkward.","Small physical changes become difficult to conceal.","You move through clutter with unusual ease.","Your posture and proportions shift more dramatically.","Equipment fit becomes a serious concern.","Stealth and movement feel instinctive.","Human appearance is heavily reduced.","The new form is nearly complete.","Your body settles fully into its transformed shape."]
+  };
+  const line=(tables[species]||tables.wolf)[Math.max(0,Math.min(11,stage-1))];
+  addNarrative(line,"warning"); addEvidence(line, stage<=2?"Source uncertain; physical change not yet reliably established.":`The symptom is consistent with the earlier suspicious exposure${state.tf.knownSpecies?` and its ${species}-like signature`:""}.`);
+  if(stage===3)state.skills.occult=Math.min(5,state.skills.occult+1);
+}
+
+function visibleForm(){
+  const s=state.tf.stage;if(!state.tf.active||s<3)return "Human";if(s<=4)return "Slightly Altered";if(s<=7)return "Altered";if(s<=10)return "Heavily Altered";return "Transformed";
+}
+
+function addNarrative(text,cls=""){ state.currentNarrative.push(`<span class="${cls}">${text}</span>`); if(state.currentNarrative.length>14)state.currentNarrative=state.currentNarrative.slice(-14); renderNarrative(); }
+function addJournal(text){state.journal.unshift({room:state.roomNo,text});if(state.journal.length>50)state.journal.pop();}
+function addEvidence(observed,assessment){state.evidence.unshift({room:state.roomNo,observed,assessment});if(state.evidence.length>30)state.evidence.pop();}
+function discover(text){if(!state.discoveries.includes(text)){state.discoveries.unshift(text);state.stats.majorDiscoveries++;}}
+function updateRouteStatuses(){
+  Object.values(state.routes).forEach(r=>{
+    if(!r.known)r.status="Unknown";
+    else if(r.evidence+r.parts>=4)r.status="Ready to attempt";
+    else if(r.evidence+r.parts>=2)r.status="Credible lead";
+    else r.status="Rumour";
+  });
+}
+
+function renderAll(){
+  if(!state){ui.saveBtn.disabled=true;return;}
+  ui.saveBtn.disabled=false;
+  renderStatus();renderRoom();renderJournal();renderInventory();renderRoutes();
+}
+function renderStatus(){
+  const p=state.player,s=derivedStats();
+  ui.healthText.textContent=`${p.hp} / ${p.maxHp}`;ui.healthBar.style.width=(p.hp/p.maxHp*100)+"%";
+  ui.staminaText.textContent=`${p.stamina} / ${p.maxStamina}`;ui.staminaBar.style.width=(p.stamina/p.maxStamina*100)+"%";
+  ui.guardStat.textContent=s.guard;ui.damageStat.textContent=s.damage;ui.accuracyStat.textContent=s.accuracy;ui.speedStat.textContent=s.speed;ui.resolveStat.textContent=s.resolve;ui.goldStat.textContent=p.gold;
+  ui.formState.textContent=visibleForm();
+  ui.injuries.innerHTML=p.injuries.map(x=>`<span class="chip danger">${esc(x)}</span>`).join("");
+  ui.weaponName.textContent=p.weapon?.name||"None";ui.armourName.textContent=p.armour?.name||"Prison Rags";ui.amuletName.textContent=p.amulet?.name||"None";
+  ui.weaponUnequip.classList.toggle("hidden",!p.weapon); ui.armourUnequip.classList.toggle("hidden",!p.armour); ui.amuletUnequip.classList.toggle("hidden",!p.amulet);
+  ui.weaponCondition.textContent=p.weapon?conditionName(p.weapon.condition):"";ui.armourCondition.textContent=p.armour?conditionName(p.armour.condition):"";
+  ui.regionName.textContent=state.region;ui.roomNumber.textContent=state.roomNo;ui.seedDisplay.textContent=state.seed;ui.slotsText.textContent=`${usedSlots()} / ${p.capacity}`;ui.difficultyBadge.textContent=DIFFICULTY[state.difficulty].label;
+}
+function conditionName(c=100){if(c<=0)return"Broken";if(c<25)return"Critical";if(c<50)return"Damaged";if(c<75)return"Worn";return"Excellent";}
+function renderRoom(){
+  const r=state.currentRoom;if(!r)return;
+  ui.roomKicker.textContent=`ROOM ${state.roomNo}`;ui.roomTitle.textContent=r.title;ui.roomTags.innerHTML=(r.tags||[]).map(t=>`<span>${esc(t)}</span>`).join("");
+  renderNarrative(); renderEnemyPanel();
+}
+function renderNarrative(){if(ui.narrative&&state)ui.narrative.innerHTML=state.currentNarrative.map(x=>`<p>${x}</p>`).join("");}
+function renderEnemyPanel(){
+  if(!state?.inCombat||!state.combat){ui.enemyPanel.classList.add("hidden");ui.enemyPanel.innerHTML="";return;}
+  ui.enemyPanel.classList.remove("hidden");
+  ui.enemyPanel.innerHTML=state.combat.enemies.filter(e=>e.hp>0).map(e=>`<div class="enemy-card"><div class="enemy-head"><div class="enemy-name">${esc(e.name)}</div><div class="enemy-hp">${e.hp} / ${e.maxHp} HP</div></div><div class="intent"><span class="intent-label">INTENT</span>${esc(intentText(e))}</div></div>`).join("");
+}
+function renderJournal(){
+  ui.journalList.innerHTML=state.journal.length?state.journal.map(j=>`<div class="journal-entry"><time>Room ${j.room}</time>${esc(j.text)}</div>`).join(""):`<div class="journal-entry"><small>No entries yet.</small></div>`;
+  ui.evidenceList.innerHTML=state.evidence.length?state.evidence.map(e=>`<div class="evidence-entry"><small>Room ${e.room}</small><strong>Observed:</strong> ${esc(e.observed)}<br><strong>Assessment:</strong> ${esc(e.assessment)}</div>`).join(""):`<div class="evidence-entry"><small>No unusual symptoms or suspicious exposures recorded.</small></div>`;
+}
+function renderInventory(){
+  const p=state.player;ui.quickText.textContent=`Quick ${p.quick.length}/${p.quickCapacity}`;
+  const items=p.inventory;
+  ui.inventoryList.innerHTML=items.length?items.map(i=>{
+    const quick=p.quick.includes(i.uid);
+    const knowledge=i.knowledge==="unknown"?"Unknown":i.knowledge==="partial"?"Partially identified":"Identified";
+    const qty=i.qty>1?` ×${i.qty}`:"";
+    return `<div class="inventory-item" data-uid="${i.uid}"><div class="item-head"><strong>${esc(i.name)}${qty}</strong>${quick?'<span class="quick-mark">QUICK</span>':""}</div><small>${esc(knowledge)} · ${i.size||0} slot${i.size===1?"":"s"}</small><div>${esc(ITEM_DB[i.key].description||"")}</div><div class="item-actions"></div></div>`;
+  }).join(""):`<div class="inventory-item"><small>Backpack empty.</small></div>`;
+  items.forEach(i=>{
+    const wrap=ui.inventoryList.querySelector(`[data-uid="${i.uid}"] .item-actions`);if(!wrap)return;
+    const add=(label,fn)=>{const b=document.createElement("button");b.textContent=label;b.onclick=fn;wrap.appendChild(b);};
+    if(["consumable","mysteryPotion","tool"].includes(i.type))add("USE",()=>useInventoryItem(i.uid,false));
+    if(["weapon","armour","amulet"].includes(i.type))add("EQUIP",()=>equipItem(i));
+    if((i.type==="mysteryPotion"||i.type==="amulet")&&i.knowledge!=="reliable")add("EXAMINE",()=>identifyItem(i));
+    if(ITEM_DB[i.key].quick)add(p.quick.includes(i.uid)?"UNQUICK":"QUICK",()=>toggleQuick(i));
+    add("DROP",()=>dropItem(i));
+  });
+  const d=state.currentRoom?.dropped||[];
+  ui.droppedWrap.classList.toggle("hidden",!d.length);
+  ui.droppedList.innerHTML=d.map(i=>`<div class="inventory-item"><strong>${esc(i.name)}</strong><div class="item-actions"><button data-pick="${i.uid}">PICK UP</button></div></div>`).join("");
+  d.forEach(i=>ui.droppedList.querySelector(`[data-pick="${i.uid}"]`)?.addEventListener("click",()=>pickUpDropped(i)));
+}
+function renderRoutes(){
+  updateRouteStatuses();
+  ui.routeList.innerHTML=Object.values(state.routes).filter(r=>r.known).map(r=>`<div class="route"><h4>${esc(r.name)}</h4><div class="status">${esc(r.status)}</div><p>${routeDescription(r.name)}</p></div>`).join("")||`<div class="route"><p>No escape route is yet credible.</p></div>`;
+  ui.discoveryList.innerHTML=state.discoveries.length?state.discoveries.map(x=>`<div class="discovery">${esc(x)}</div>`).join(""):`<div class="discovery">No major discoveries confirmed.</div>`;
+}
+function routeDescription(name){
+  if(name.includes("Chain"))return"An ancient cargo lift said to reach an upper gate. It needs control seals and working machinery.";
+  if(name.includes("Pilgrim"))return"A narrow, partially collapsed route described in old temple records.";
+  if(name.includes("Flood"))return"An old water-management tunnel with flooding, machinery, and a one-way descent.";
+  return"An ancient magical transport system whose destination depends on correct calibration.";
+}
+function clearChoices(){ui.choicePanel.innerHTML="";}
+function addChoice(label,desc,fn,cls=""){
+  const b=document.createElement("button");if(cls)b.classList.add(cls);b.innerHTML=`<strong>${esc(label)}</strong>${desc?`<small>${esc(desc)}</small>`:""}`;b.addEventListener("click",fn);ui.choicePanel.appendChild(b);
+}
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+  document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
+  q("#"+name+"Tab").classList.add("active");
+}
+function openModal(title,body,actions=[]){
+  ui.modalTitle.textContent=title;ui.modalBody.innerHTML=body;ui.modalActions.innerHTML="";
+  actions.forEach(a=>{const b=document.createElement("button");b.textContent=a.label;if(a.cls)b.className=a.cls;b.addEventListener("click",a.action);ui.modalActions.appendChild(b);});
+  ui.modal.classList.remove("hidden");
+}
+function closeModal(){ui.modal.classList.add("hidden");}
+function toast(msg){openModal("Notice",`<p>${esc(msg)}</p>`,[{label:"OK",action:closeModal}]);}
+
+</script>
+</body>
+</html>
